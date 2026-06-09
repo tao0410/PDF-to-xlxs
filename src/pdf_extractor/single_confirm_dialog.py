@@ -17,21 +17,21 @@ from table_utils import highlight_empty_cells, populate_table, table_to_records
 
 
 class SingleConfirmDialog(QDialog):
-    """单个文件确认对话框。"""
+    """单个文件确认对话框（v2：支持多行记录）。"""
 
     def __init__(
         self,
         filename: str,
         columns: List[str],
-        record: dict,
+        records: List[dict],
         field_issues: Optional[Dict[str, str]] = None,
         parent=None,
     ):
         super().__init__(parent)
         self.setWindowTitle(f"确认提取内容 - {filename}")
-        self.resize(600, 350)
+        self.resize(700, 400)
         self._columns = columns
-        self._record = dict(record)
+        self._records = [dict(r) for r in records]
         self._field_issues = field_issues or {}
         self._confirmed = False
         self._reextract = False
@@ -39,18 +39,21 @@ class SingleConfirmDialog(QDialog):
 
     def _init_ui(self):
         layout = QVBoxLayout(self)
-        layout.addWidget(QLabel("提取结果："))
+        layout.addWidget(QLabel(
+            f"提取结果（共 {len(self._records)} 条记录）：" if len(self._records) > 1
+            else "提取结果："
+        ))
 
         self.table = QTableWidget()
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         layout.addWidget(self.table)
 
-        rows = [{col: self._record.get(col, "") for col in self._columns}]
+        rows = [{col: r.get(col, "") for col in self._columns} for r in self._records]
         issues_map = {0: self._field_issues} if self._field_issues else {}
         populate_table(self.table, self._columns, rows, issues_map)
 
         if self._field_issues:
-            warnings = "；".join(f"{k}字段{ v}" for k, v in self._field_issues.items())
+            warnings = "；".join(f"{k}字段{v}" for k, v in self._field_issues.items())
             layout.addWidget(QLabel(f"⚠ {warnings}，请检查是否正确"))
 
         btn_layout = QHBoxLayout()
@@ -68,9 +71,7 @@ class SingleConfirmDialog(QDialog):
         self.btn_cancel.clicked.connect(self.reject)
 
     def _on_confirm(self):
-        records = table_to_records(self.table, self._columns)
-        if records:
-            self._record = records[0]
+        self._records = table_to_records(self.table, self._columns)
         self._confirmed = True
         self.accept()
 
@@ -84,5 +85,5 @@ class SingleConfirmDialog(QDialog):
     def wants_reextract(self) -> bool:
         return self._reextract
 
-    def get_record(self) -> dict:
-        return self._record
+    def get_records(self) -> List[dict]:
+        return self._records

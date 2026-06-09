@@ -117,9 +117,16 @@ class PdfCanvas(QWidget):
 
 
 class PdfPreviewDialog(QDialog):
-    """PDF 预览与坐标提取对话框。"""
+    """PDF 预览与坐标提取对话框。
 
-    coordinates_confirmed = pyqtSignal(int, int, int, int, int)  # x1,y1,x2,y2,page(1-based)
+    支持三种模式：
+    - coordinate: 原有坐标框选（默认）
+    - keyword: 关键词测试高亮
+    - table: 表格区域框选
+    """
+
+    coordinates_confirmed = pyqtSignal(int, int, int, int, int)  # x1,y1,x2,y2,page(1-based) — coordinate 模式
+    table_region_confirmed = pyqtSignal(int, int, int, int, int)  # x1,y1,x2,y2,page — table 模式
 
     def __init__(self, pdf_path: str, parent=None):
         super().__init__(parent)
@@ -131,9 +138,33 @@ class PdfPreviewDialog(QDialog):
         self._zoom = 1.0
         self._fit_mode = "fit"
         self._pdf_bbox = (0, 0, 0, 0)
+        self._mode = "coordinate"  # 当前预览模式
+        self._keywords = []        # 关键词列表（keyword 模式高亮用）
 
         self._init_ui()
         self._load_pdf()
+
+    def set_mode(self, mode: str) -> None:
+        """设置预览模式: 'coordinate' | 'keyword' | 'table'"""
+        self._mode = mode
+        if mode == "coordinate":
+            self.setWindowTitle("PDF预览 — 坐标框选")
+            self.btn_confirm.setText("确认坐标")
+            self.lbl_status.setText("请框选要提取的区域，或直接查看 PDF 内容")
+        elif mode == "keyword":
+            self.setWindowTitle("PDF预览 — 关键词测试")
+            self.btn_confirm.setText("确认坐标")
+            self.lbl_status.setText("彩色高亮为关键词匹配位置")
+        elif mode == "table":
+            self.setWindowTitle("PDF预览 — 表格区域框选")
+            self.btn_confirm.setText("确认表格区域")
+            self.lbl_status.setText("请框选整个表格区域（包含表头和数据行）")
+
+    def set_keywords(self, keywords: list) -> None:
+        """设置需要高亮的关键词列表（keyword 模式）。"""
+        self._keywords = keywords or []
+        if self._doc:
+            self._render_page()
 
     def _init_ui(self):
         layout = QVBoxLayout(self)
@@ -215,6 +246,10 @@ class PdfPreviewDialog(QDialog):
         page = self._doc[self._current_page]
         page_h = page.rect.height
 
+        # 关键词模式：先画高亮再渲染
+        if self._mode == "keyword" and self._keywords:
+            self._draw_highlights(page)
+
         if self._fit_mode == "fit":
             viewport = self.scroll_area.viewport().size()
             scale_x = (viewport.width() - 20) / page.rect.width
@@ -235,6 +270,24 @@ class PdfPreviewDialog(QDialog):
         self.lbl_page.setText(f"第 {self._current_page + 1} 页 / 共 {total} 页")
         self.btn_prev.setEnabled(self._current_page > 0)
         self.btn_next.setEnabled(self._current_page < total - 1)
+
+    def _draw_highlights(self, page) -> None:
+        """在 PDF 页面上用半透明矩形标注关键词匹配位置。"""
+        colors = [
+            (1, 0.3, 0.3),   # 红
+            (0.3, 0.6, 1),   # 蓝
+            (0.3, 0.8, 0.4),  # 绿
+            (1, 0.7, 0.2),   # 橙
+            (0.7, 0.4, 1),   # 紫
+        ]
+        for i, kw in enumerate(self._keywords):
+            if not kw:
+                continue
+            color = colors[i % len(colors)]
+            areas = page.search_for(kw)
+            for rect in areas:
+                page.draw_rect(rect, color=color, fill=color, fill_opacity=0.2,
+                               width=0.5, overlay=True)
 
     def _prev_page(self):
         if self._current_page > 0:
@@ -281,12 +334,18 @@ class PdfPreviewDialog(QDialog):
             QMessageBox.warning(self, "提示", "请先框选提取区域")
             return
         page_num = self._current_page + 1
-        self.coordinates_confirmed.emit(x1, y1, x2, y2, page_num)
-        # 窗口保持打开，清除当前框选以便立即开始下一次框选
+
+        if self._mode == "table":
+            self.table_region_confirmed.emit(x1, y1, x2, y2, page_num)
+            self.lbl_status.setText(
+                f"表格区域已确认（第 {page_num} 页）: ({x1},{y1})-({x2},{y2})"
+            )
+        else:
+            self.coordinates_confirmed.emit(x1, y1, x2, y2, page_num)
+            self.lbl_status.setText(
+                f"坐标已确认（第 {page_num} 页），可继续框选下一条规则"
+            )
         self._clear_selection()
-        self.lbl_status.setText(
-            f"坐标已确认（第 {page_num} 页），可继续框选下一条规则"
-        )
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

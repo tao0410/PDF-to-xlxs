@@ -384,25 +384,34 @@ class MainWindow(QMainWindow):
             self._save_session()
             return
 
-        record = {col: result["fields"].get(col, "") for col in cols}
+        # v2: 从 records 列表展开记录
+        records = result.get("records", [])
+        if not records:
+            records = [{}]
+        source_name = basename(result["source_file"])
+        for r in records:
+            r[SOURCE_COL] = source_name
         issues = result.get("field_issues", {})
 
         while True:
             dlg = SingleConfirmDialog(
-                basename(result["source_file"]), cols, record, issues, self
+                source_name, cols, records, issues, self
             )
             dlg.exec_()
             if dlg.wants_reextract():
                 extractor_results = PdfExtractor(self.config).extract_single(
                     result["source_file"]
                 )
-                record = {col: extractor_results["fields"].get(col, "") for col in cols}
+                records = extractor_results.get("records", [])
+                if not records:
+                    records = [{}]
+                for r in records:
+                    r[SOURCE_COL] = source_name
                 issues = extractor_results.get("field_issues", {})
                 continue
             if dlg.is_confirmed():
-                record = dlg.get_record()
-                record[SOURCE_COL] = basename(result["source_file"])
-                self.confirmed_records.append(record)
+                records = dlg.get_records()
+                self.confirmed_records.extend(records)
                 for f in self.files:
                     if f["path"] == result["source_file"]:
                         f["status"] = STATUS_CONFIRMED
@@ -444,11 +453,18 @@ class MainWindow(QMainWindow):
                         f["status"] = STATUS_SKIPPED
                 continue
             success += 1
-            record = {col: result["fields"].get(col, "") for col in cols}
-            record[SOURCE_COL] = basename(result["source_file"])
-            records.append(record)
+            source_name = basename(result["source_file"])
+            # v2: 展开 records 列表
+            sub_records = result.get("records", [])
+            if not sub_records:
+                sub_records = [{}]
+            for sub in sub_records:
+                record = {col: sub.get(col, "") for col in cols}
+                record[SOURCE_COL] = source_name
+                records.append(record)
             if result.get("field_issues"):
-                issues_map[len(records) - 1] = result["field_issues"]
+                # 将 issues 标记到该结果的第一条 record
+                issues_map[len(records) - len(sub_records)] = result["field_issues"]
 
         stats = {
             "total": len(results),
