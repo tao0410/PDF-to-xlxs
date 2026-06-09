@@ -260,22 +260,28 @@ class PdfExtractor:
 
     @staticmethod
     def _cluster_words_to_rows(words: list) -> List[list]:
-        """将词块按 Y 坐标聚类为行（容忍 ±12pt，合并续行并区分行间）。"""
+        """将词块按 Y 坐标聚类为行。
+
+        使用动态最大中心点策略：新词与当前行已合并词块中最大的 Y 中心比较。
+        12pt 间距（续行）被逐行吸收，16pt 间距（行间）自然断裂为新行。
+        """
         if not words:
             return []
         sorted_words = sorted(words, key=lambda w: (w["top"], w["x0"]))
         rows = []
         current_row = [sorted_words[0]]
-        current_y = (sorted_words[0]["top"] + sorted_words[0]["bottom"]) / 2
+        max_center = (sorted_words[0]["top"] + sorted_words[0]["bottom"]) / 2
 
         for w in sorted_words[1:]:
             w_y = (w["top"] + w["bottom"]) / 2
-            if abs(w_y - current_y) <= 12:
+            if abs(w_y - max_center) <= 12:
                 current_row.append(w)
+                if w_y > max_center:
+                    max_center = w_y
             else:
                 rows.append(current_row)
                 current_row = [w]
-                current_y = w_y
+                max_center = w_y
         rows.append(current_row)
         return rows
 
