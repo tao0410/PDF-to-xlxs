@@ -439,7 +439,7 @@ class PdfExtractor:
     def _clean_text(text: str) -> str:
         """去除多余空格、换行符和特殊控制字符。"""
         text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", text)
-        text = re.sub(r"\s+", " ", text)
+        text = re.sub(r"\s+", "", text)
         return text.strip()
 
     def _validate_field(self, value: str, data_type: str) -> Optional[str]:
