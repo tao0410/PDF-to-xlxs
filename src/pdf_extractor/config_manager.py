@@ -11,19 +11,8 @@ from app_utils import get_app_dir, get_exe_dir
 logger = logging.getLogger(__name__)
 
 DATA_TYPES = ("文本", "数字", "日期", "列表")
-RULE_MODES = ("coordinate", "keyword", "table")
-KEYWORD_DIRECTIONS = ("right", "below", "left", "above")
-TABLE_STRATEGIES = ("lines", "lines_strict", "text", "explicit")
-
-# 默认表格检测参数
-DEFAULT_TABLE_SETTINGS = {
-    "vertical_strategy": "text",
-    "horizontal_strategy": "text",
-    "intersection_y_tolerance": 3,
-    "intersection_x_tolerance": 3,
-    "snap_y_tolerance": 3,
-    "snap_x_tolerance": 3,
-}
+RULE_MODES = ("coordinate", "anchor", "table_column")
+ANCHOR_DIRECTIONS = ("right", "below", "left", "above")
 
 
 class ConfigManager:
@@ -54,42 +43,38 @@ class ConfigManager:
             "rules": [
                 {
                     "name": "编号",
-                    "mode": "coordinate",
+                    "mode": "anchor",
+                    "anchor_text": "编号",
+                    "direction": "right",
+                    "range": 200,
                     "page_range": "第1页",
-                    "x1": 100,
-                    "y1": 200,
-                    "x2": 150,
-                    "y2": 220,
                     "data_type": "文本",
                 },
                 {
                     "name": "名称",
-                    "mode": "coordinate",
+                    "mode": "anchor",
+                    "anchor_text": "名称",
+                    "direction": "right",
+                    "range": 200,
                     "page_range": "第1页",
-                    "x1": 160,
-                    "y1": 200,
-                    "x2": 300,
-                    "y2": 220,
                     "data_type": "文本",
                 },
                 {
                     "name": "日期",
-                    "mode": "coordinate",
+                    "mode": "anchor",
+                    "anchor_text": "日期",
+                    "direction": "right",
+                    "range": 200,
                     "page_range": "第1页",
-                    "x1": 310,
-                    "y1": 200,
-                    "x2": 400,
-                    "y2": 220,
                     "data_type": "日期",
                 },
                 {
                     "name": "金额",
-                    "mode": "coordinate",
+                    "mode": "anchor",
+                    "anchor_text": "金额",
+                    "direction": "right",
+                    "range": 200,
                     "page_range": "第1页",
-                    "x1": 410,
-                    "y1": 200,
-                    "x2": 500,
-                    "y2": 220,
                     "data_type": "数字",
                 },
             ],
@@ -130,23 +115,9 @@ class ConfigManager:
 
     @staticmethod
     def get_column_names(config: dict) -> List[str]:
-        """获取输出列名列表。
-
-        对于 coordinate/keyword 模式，直接取 rule 的 name。
-        对于 table 模式，展开 column_mapping 的 values 为多个列名。
-        """
+        """获取输出列名列表。每个 rule 的 name 即为输出列名。"""
         rules = ConfigManager._resolve_rules(config)
-        names = []
-        for rule in rules:
-            if rule.get("mode") == "table":
-                mapping = rule.get("column_mapping", {})
-                if mapping:
-                    names.extend(mapping.values())
-                else:
-                    names.append(rule.get("name", ""))
-            else:
-                names.append(rule.get("name", ""))
-        return names
+        return [r["name"] for r in rules]
 
     @staticmethod
     def _resolve_rules(config: dict) -> List[dict]:
@@ -217,16 +188,14 @@ class ConfigManager:
             if rule["mode"] == "coordinate":
                 if not all(k in rule for k in ("x1", "y1", "x2", "y2")):
                     return False
-            elif rule["mode"] == "keyword":
-                if "keyword" not in rule:
+            elif rule["mode"] == "anchor":
+                if "anchor_text" not in rule:
                     return False
-                if rule.get("direction", "right") not in KEYWORD_DIRECTIONS:
+                if rule.get("direction", "right") not in ANCHOR_DIRECTIONS:
                     return False
-            elif rule["mode"] == "table":
-                if "table_region" not in rule or "column_mapping" not in rule:
+            elif rule["mode"] == "table_column":
+                if "column_header" not in rule:
                     return False
-                if not isinstance(rule["table_region"], list) or len(rule["table_region"]) != 4:
-                    return False
-                if not isinstance(rule["column_mapping"], dict):
+                if "row_number" not in rule or not isinstance(rule["row_number"], int):
                     return False
         return True

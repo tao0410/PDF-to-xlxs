@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""PDF 提取器：基于 pdfplumber，支持坐标/关键词/表格三种提取模式。"""
+"""PDF 提取器：基于 pdfplumber，支持坐标/锚点/表格列三种提取模式。"""
 
 import logging
 import re
@@ -17,19 +17,15 @@ DATE_PATTERNS = [
     "%Y年%m月%d日",
 ]
 
-# 默认表格检测参数
-DEFAULT_TABLE_SETTINGS = {
-    "vertical_strategy": "text",
-    "horizontal_strategy": "text",
-    "intersection_y_tolerance": 3,
-    "intersection_x_tolerance": 3,
-    "snap_y_tolerance": 3,
-    "snap_x_tolerance": 3,
-}
-
 
 class PdfExtractor:
-    """封装 pdfplumber，提供三种模式的 PDF 内容提取接口。"""
+    """封装 pdfplumber，提供三种模式的 PDF 内容提取接口。
+
+    模式：
+    - coordinate: 坐标框选提取（v1 兼容）
+    - anchor: 锚点关键词提取
+    - table_column: 表格列按行号提取
+    """
 
     def __init__(self, config: dict):
         """初始化 PDF 提取器。
@@ -106,66 +102,28 @@ class PdfExtractor:
     # ── 提取调度 ────────────────────────────────────────────
 
     def _extract_all(self, pdf, result: dict) -> None:
-        """按 rules 逐条提取，协调单值字段与多行表格输出。"""
-        # 第一步：分别收集各规则的提取结果
-        scalar_results = {}   # {name: (value, issue)}  用于 coordinate/keyword
-        table_results = {}    # {name: ([{col: val}], issue)}  用于 table
-
+        """按 rules 逐条提取，收集为一条 record。"""
+        record = {}
         for rule in self.rules:
             name = rule["name"]
             mode = rule.get("mode", "coordinate")
             try:
                 if mode == "coordinate":
                     value, issue = self._extract_coordinate(pdf, rule)
-                    scalar_results[name] = (value, issue)
-                elif mode == "keyword":
-                    value, issue = self._extract_keyword(pdf, rule)
-                    scalar_results[name] = (value, issue)
-                elif mode == "table":
-                    rows, issue = self._extract_table(pdf, rule)
-                    table_results[name] = (rows, issue)
+                elif mode == "anchor":
+                    value, issue = self._extract_anchor(pdf, rule)
+                elif mode == "table_column":
+                    value, issue = self._extract_table_column(pdf, rule)
                 else:
-                    scalar_results[name] = ("", f"未知提取模式: {mode}")
+                    value, issue = "", f"未知提取模式: {mode}"
+                record[name] = value
+                if issue:
+                    result["field_issues"][name] = issue
             except Exception as e:
-                scalar_results[name] = ("", str(e))
+                record[name] = ""
+                result["field_issues"][name] = str(e)
                 logger.warning("规则 %s 提取失败: %s", name, e)
-
-        # 第二步：收集 issues
-        for name, (val, issue) in scalar_results.items():
-            if issue:
-                result["field_issues"][name] = issue
-        for name, (rows, issue) in table_results.items():
-            if issue:
-                result["field_issues"][name] = issue
-
-        # 第三步：确定行数（以最大的 table 行数为准）
-        max_table_rows = 1
-        for name, (rows, issue) in table_results.items():
-            if isinstance(rows, list) and len(rows) > max_table_rows:
-                max_table_rows = len(rows)
-
-        # 第四步：生成 records
-        for row_idx in range(max_table_rows):
-            record = {}
-            # 先填 scalar 字段（每行重复相同的值）
-            for name, (value, issue) in scalar_results.items():
-                record[name] = value
-            # 再填 table 字段（取第 row_idx 行）
-            for name, (rows, issue) in table_results.items():
-                if isinstance(rows, list) and row_idx < len(rows):
-                    for col, val in rows[row_idx].items():
-                        record[col] = val
-                else:
-                    # 该 table 行数不足，填空
-                    pass
-            result["records"].append(record)
-
-        # 如果没有任何提取结果，至少返回一条空记录
-        if not result["records"]:
-            record = {}
-            for name, (value, issue) in scalar_results.items():
-                record[name] = value
-            result["records"].append(record)
+        result["records"].append(record)
 
     # ── 坐标提取模式 ───────────────────────────────────────
 
@@ -196,18 +154,18 @@ class PdfExtractor:
 
     # ── 关键词匹配模式 ─────────────────────────────────────
 
-    def _extract_keyword(self, pdf, rule: dict) -> Tuple[str, Optional[str]]:
-        """关键词模式：搜索关键词，按指定方向和范围提取邻近文字。
+    def _extract_anchor(self, pdf, rule: dict) -> Tuple[str, Optional[str]]:
+        """锚点模式：搜索关键词，按指定方向和范围提取邻近文字。
 
         Args:
-            rule: {keyword, direction, range, page_range, data_type}
+            rule: {anchor_text, direction, range, page_range, data_type}
 
         Returns:
             (value, issue)
         """
-        keyword = rule.get("keyword", "")
-        if not keyword:
-            return "", "未配置关键词"
+        anchor_text = rule.get("anchor_text", "")
+        if not anchor_text:
+            return "", "未配置锚点关键词"
 
         direction = rule.get("direction", "right")
         search_range = float(rule.get("range", 200))
@@ -224,9 +182,9 @@ class PdfExtractor:
             # 搜索包含关键词的词块
             for w in words:
                 text = w.get("text", "").strip()
-                if keyword in text:
+                if anchor_text in text:
                     # 先尝试从同一词块内提取值（关键词后面部分）
-                    value = self._extract_value_after_keyword(text, keyword)
+                    value = self._extract_value_after_anchor(text, anchor_text)
                     if value:
                         cleaned = self._clean_text(value)
                         issue = self._validate_field(cleaned, rule.get("data_type", "文本"))
@@ -239,15 +197,19 @@ class PdfExtractor:
                         issue = self._validate_field(cleaned, rule.get("data_type", "文本"))
                         return cleaned, issue
 
-        return "", f"未找到关键词「{keyword}」"
+        return "", f"未找到关键词「{anchor_text}」"
 
     @staticmethod
-    def _extract_value_after_keyword(text: str, keyword: str) -> str:
-        """从包含关键词的文本块中提取值。"""
-        idx = text.find(keyword)
+    def _extract_value_after_anchor(text: str, anchor_text: str) -> str:
+        """从包含锚点关键词的文本块中提取值。
+
+        例如: text="编号：TZY15-ECO-GY-000155", anchor_text="编号"
+        → 去除 "编号" → 去除前导冒号 → "TZY15-ECO-GY-000155"
+        """
+        idx = text.find(anchor_text)
         if idx == -1:
             return ""
-        remaining = text[idx + len(keyword):]
+        remaining = text[idx + len(anchor_text):]
         remaining = re.sub(r"^[：:\s]+", "", remaining)
         return remaining.strip()
 
@@ -296,89 +258,125 @@ class PdfExtractor:
         candidates.sort(key=lambda x: x[0])
         return " ".join(w.get("text", "").strip() for _, w in candidates)
 
-    # ── 表格结构识别模式 ───────────────────────────────────
+    @staticmethod
+    def _cluster_words_to_rows(words: list) -> List[list]:
+        """将词块按 Y 坐标聚类为行（容忍 ±12pt，合并续行并区分行间）。"""
+        if not words:
+            return []
+        sorted_words = sorted(words, key=lambda w: (w["top"], w["x0"]))
+        rows = []
+        current_row = [sorted_words[0]]
+        current_y = (sorted_words[0]["top"] + sorted_words[0]["bottom"]) / 2
 
-    def _extract_table(self, pdf, rule: dict) -> Tuple[List[dict], Optional[str]]:
-        """表格模式：框选表格区域，使用 pdfplumber 原生 extract_tables() 识别。
+        for w in sorted_words[1:]:
+            w_y = (w["top"] + w["bottom"]) / 2
+            if abs(w_y - current_y) <= 12:
+                current_row.append(w)
+            else:
+                rows.append(current_row)
+                current_row = [w]
+                current_y = w_y
+        rows.append(current_row)
+        return rows
+
+    # ── 表格列提取模式 ───────────────────────────────────
+
+    def _extract_table_column(self, pdf, rule: dict) -> Tuple[str, Optional[str]]:
+        """表格列模式：按列标题定位表格列，提取指定行的数据。
 
         Args:
-            rule: {table_region, column_mapping, page_range, table_settings?}
+            rule: {column_header, row_number, page_range}
 
         Returns:
-            (rows, issue) — rows 为 [{output_col: value}] 列表
+            (value, issue)
         """
-        table_region = rule.get("table_region", [])
-        if not table_region or len(table_region) != 4:
-            return [], "未配置表格区域"
+        column_header = rule.get("column_header", "")
+        if not column_header:
+            return "", "未配置列标题关键词"
 
-        column_mapping = rule.get("column_mapping", {})
-        if not column_mapping:
-            return [], "未配置列名映射"
-
-        # 合并用户自定义的 table_settings 到默认值
-        table_settings = dict(DEFAULT_TABLE_SETTINGS)
-        user_settings = rule.get("table_settings", {})
-        if isinstance(user_settings, dict):
-            table_settings.update(user_settings)
+        row_number = int(rule.get("row_number", 2))
+        if row_number < 2:
+            return "", "行号必须 >= 2（1=表头行）"
 
         pages = self._parse_page_range(rule.get("page_range", "第1页"), len(pdf.pages))
 
-        all_rows = []
         for page_idx in pages:
             if page_idx < 0 or page_idx >= len(pdf.pages):
                 continue
             page = pdf.pages[page_idx]
-
-            # 裁剪表格区域
-            tx1, ty1, tx2, ty2 = table_region
-            bbox = self._bl_bbox_to_plumber(tx1, ty1, tx2, ty2, page.width, page.height)
-            cropped = page.within_bbox(bbox)
-
-            # 使用 pdfplumber 原生 extract_tables()
-            tables = cropped.extract_tables(table_settings)
-            if not tables:
+            words = page.extract_words()
+            if not words:
                 continue
 
-            for table in tables:
-                if not table or len(table) < 2:
-                    # 至少需要表头 + 一行数据
-                    continue
-                # 第一行是表头
-                headers = [re.sub(r"\s+", "", str(h or "")) for h in table[0]]
-                # 建立表头到输出列名的映射
-                header_to_output = {}
-                for i, h in enumerate(headers):
-                    # 精确匹配
-                    if h in column_mapping:
-                        header_to_output[i] = column_mapping[h]
-                        continue
-                    # 模糊匹配：用户配置的关键词是检测到表头的子串或反之
-                    for src, dst in column_mapping.items():
-                        src_norm = re.sub(r"\s+", "", src)
-                        if src_norm in h or h in src_norm:
-                            header_to_output[i] = dst
-                            break
-                if not header_to_output:
-                    continue
+            # 1. 找表头词块（优先匹配多列表头行，跳过孤立章节标题）
+            header_word = None
+            header_row_words = []
+            candidates = [w for w in words if column_header in w.get("text", "")]
+            for candidate in candidates:
+                candidate_y = (candidate["top"] + candidate["bottom"]) / 2
+                same_row = [
+                    w for w in words
+                    if abs((w["top"] + w["bottom"]) / 2 - candidate_y) <= 8
+                ]
+                if len(same_row) >= 3 or len(candidates) == 1:
+                    header_word = candidate
+                    header_row_words = same_row
+                    break
+            if not header_word:
+                continue
 
-                # 数据行
-                for row in table[1:]:
-                    if not row or all(c is None or str(c).strip() == "" for c in row):
-                        continue
-                    record = {}
-                    for col_idx, output_name in header_to_output.items():
-                        if col_idx < len(row):
-                            val = str(row[col_idx] or "").strip()
-                            record[output_name] = val
-                        else:
-                            record[output_name] = ""
-                    if record:
-                        all_rows.append(record)
+            header_row_words.sort(key=lambda w: w["x0"])
+            headers_info = [(w["x0"], w["x1"], w.get("text", "")) for w in header_row_words]
 
-        if not all_rows:
-            return [], f"未在表格区域中识别到数据"
+            # 2. 确定目标列的 X 范围（列间中点分割）
+            col_left, col_right = None, None
+            for i in range(len(headers_info)):
+                hx0, hx1, htext = headers_info[i][0], headers_info[i][1], headers_info[i][2]
+                if column_header in htext:
+                    if i > 0:
+                        col_left = (headers_info[i - 1][1] + hx0) / 2
+                    else:
+                        col_left = max(0, hx0 - 20)
+                    if i + 1 < len(headers_info):
+                        col_right = (hx1 + headers_info[i + 1][0]) / 2
+                    else:
+                        col_right = min(page.width, hx1 + 20)
+                    break
 
-        return all_rows, None
+            if col_left is None:
+                continue
+
+            # 3. 收集表头以下的词块，按 Y 聚类成行
+            data_start_y = max(w["bottom"] for w in header_row_words) + 5
+            data_words = [
+                w for w in words
+                if w["top"] >= data_start_y and w.get("text", "").strip()
+            ]
+            if not data_words:
+                return "", f"列「{column_header}」下无数据行"
+
+            rows = self._cluster_words_to_rows(data_words)
+
+            # 4. 按 row_number 取指定行（row_number=2 → data_rows[0]）
+            data_idx = row_number - 2  # 转为 0-based 数据行索引
+            if data_idx < 0 or data_idx >= len(rows):
+                return "", f"行号 {row_number} 超出数据范围（共 {len(rows)} 行数据）"
+
+            target_row = rows[data_idx]
+            col_words = []
+            for w in target_row:
+                w_x_center = (w["x0"] + w["x1"]) / 2
+                if col_left <= w_x_center <= col_right:
+                    col_words.append(w.get("text", "").strip())
+
+            if not col_words:
+                return "", f"第 {row_number} 行中未找到列「{column_header}」的数据"
+
+            value = self._clean_text(" ".join(col_words))
+            issue = self._validate_field(value, rule.get("data_type", "文本"))
+            return value, issue
+
+        return "", f"未找到列标题「{column_header}」"
 
     # ── 通用工具方法 ────────────────────────────────────────
 

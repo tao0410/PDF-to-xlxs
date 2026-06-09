@@ -121,12 +121,11 @@ class PdfPreviewDialog(QDialog):
 
     支持三种模式：
     - coordinate: 原有坐标框选（默认）
-    - keyword: 关键词测试高亮
-    - table: 表格区域框选
+    - anchor: 锚点关键词高亮
+    - table_column: 表格列表头关键词高亮
     """
 
     coordinates_confirmed = pyqtSignal(int, int, int, int, int)  # x1,y1,x2,y2,page(1-based) — coordinate 模式
-    table_region_confirmed = pyqtSignal(int, int, int, int, int)  # x1,y1,x2,y2,page — table 模式
 
     def __init__(self, pdf_path: str, parent=None):
         super().__init__(parent)
@@ -145,23 +144,23 @@ class PdfPreviewDialog(QDialog):
         self._load_pdf()
 
     def set_mode(self, mode: str) -> None:
-        """设置预览模式: 'coordinate' | 'keyword' | 'table'"""
+        """设置预览模式: 'coordinate' | 'anchor' | 'table_column'"""
         self._mode = mode
         if mode == "coordinate":
             self.setWindowTitle("PDF预览 — 坐标框选")
             self.btn_confirm.setText("确认坐标")
             self.lbl_status.setText("请框选要提取的区域，或直接查看 PDF 内容")
-        elif mode == "keyword":
-            self.setWindowTitle("PDF预览 — 关键词测试")
+        elif mode == "anchor":
+            self.setWindowTitle("PDF预览 — 锚点关键词测试")
             self.btn_confirm.setText("确认坐标")
             self.lbl_status.setText("彩色高亮为关键词匹配位置")
-        elif mode == "table":
-            self.setWindowTitle("PDF预览 — 表格区域框选")
-            self.btn_confirm.setText("确认表格区域")
-            self.lbl_status.setText("请框选整个表格区域（包含表头和数据行）")
+        elif mode == "table_column":
+            self.setWindowTitle("PDF预览 — 表格列定位测试")
+            self.btn_confirm.setText("确认坐标")
+            self.lbl_status.setText("高亮为表头关键词匹配位置")
 
     def set_keywords(self, keywords: list) -> None:
-        """设置需要高亮的关键词列表（keyword 模式）。"""
+        """设置需要高亮的关键词列表（anchor / table_column 模式）。"""
         self._keywords = keywords or []
         if self._doc:
             self._render_page()
@@ -247,7 +246,7 @@ class PdfPreviewDialog(QDialog):
         page_h = page.rect.height
 
         # 关键词模式：先画高亮再渲染
-        if self._mode == "keyword" and self._keywords:
+        if self._mode in ("anchor", "table_column") and self._keywords:
             self._draw_highlights(page)
 
         if self._fit_mode == "fit":
@@ -335,16 +334,10 @@ class PdfPreviewDialog(QDialog):
             return
         page_num = self._current_page + 1
 
-        if self._mode == "table":
-            self.table_region_confirmed.emit(x1, y1, x2, y2, page_num)
-            self.lbl_status.setText(
-                f"表格区域已确认（第 {page_num} 页）: ({x1},{y1})-({x2},{y2})"
-            )
-        else:
-            self.coordinates_confirmed.emit(x1, y1, x2, y2, page_num)
-            self.lbl_status.setText(
-                f"坐标已确认（第 {page_num} 页），可继续框选下一条规则"
-            )
+        self.coordinates_confirmed.emit(x1, y1, x2, y2, page_num)
+        self.lbl_status.setText(
+            f"坐标已确认（第 {page_num} 页），可继续框选下一条规则"
+        )
         self._clear_selection()
 
     def resizeEvent(self, event):

@@ -26,9 +26,7 @@ from PyQt5.QtWidgets import (
 
 from config_manager import (
     DATA_TYPES,
-    DEFAULT_TABLE_SETTINGS,
-    KEYWORD_DIRECTIONS,
-    TABLE_STRATEGIES,
+    ANCHOR_DIRECTIONS,
     ConfigManager,
 )
 from pdf_preview_dialog import PdfPreviewDialog
@@ -110,10 +108,10 @@ class ConfigDialog(QDialog):
         # 右侧：参数面板（动态内容）
         self.param_stack = QVBoxLayout()
         self.grp_coordinate = self._build_coordinate_panel()
-        self.grp_keyword = self._build_keyword_panel()
-        self.grp_table = self._build_table_panel()
+        self.grp_anchor = self._build_anchor_panel()
+        self.grp_table = self._build_table_column_panel()
         self.param_stack.addWidget(self.grp_coordinate)
-        self.param_stack.addWidget(self.grp_keyword)
+        self.param_stack.addWidget(self.grp_anchor)
         self.param_stack.addWidget(self.grp_table)
         self.param_stack.addStretch()
         body_layout.addLayout(self.param_stack)
@@ -173,7 +171,7 @@ class ConfigDialog(QDialog):
         layout.addStretch()
         return grp
 
-    def _build_keyword_panel(self) -> QGroupBox:
+    def _build_anchor_panel(self) -> QGroupBox:
         """关键词匹配参数面板。"""
         grp = QGroupBox("关键词匹配参数")
         layout = QVBoxLayout(grp)
@@ -200,66 +198,33 @@ class ConfigDialog(QDialog):
         layout.addStretch()
         return grp
 
-    def _build_table_panel(self) -> QGroupBox:
-        """表格提取参数面板。"""
-        grp = QGroupBox("表格提取参数")
+    def _build_table_column_panel(self) -> QGroupBox:
+        """表格列提取参数面板（简化版：表头关键词 + 行号）。"""
+        grp = QGroupBox("表格列提取参数")
         layout = QVBoxLayout(grp)
 
-        self.btn_pick_table = QPushButton("选择PDF框选表格区域")
-        self.btn_pick_table.clicked.connect(self._open_preview_table)
-        layout.addWidget(self.btn_pick_table)
+        row1 = QHBoxLayout()
+        row1.addWidget(QLabel("表头关键词:"))
+        self.tc_column_header = QLineEdit()
+        self.tc_column_header.setPlaceholderText("如：更改对象编号")
+        row1.addWidget(self.tc_column_header)
+        layout.addLayout(row1)
 
-        self.lbl_table_region = QLabel("表格区域: 未框选")
-        self.lbl_table_region.setStyleSheet("color: #666;")
-        layout.addWidget(self.lbl_table_region)
+        row2 = QHBoxLayout()
+        row2.addWidget(QLabel("行号:"))
+        self.tc_row_number = QSpinBox()
+        self.tc_row_number.setRange(2, 999)
+        self.tc_row_number.setValue(2)
+        self.tc_row_number.setToolTip("1=表头行，2=第一条数据行")
+        row2.addWidget(self.tc_row_number)
+        row2.addStretch()
+        layout.addLayout(row2)
 
-        layout.addWidget(QLabel("列名映射（识别列名 → 输出字段名）："))
-        self.col_map_table = QTableWidget()
-        self.col_map_table.setColumnCount(2)
-        self.col_map_table.setHorizontalHeaderLabels(["识别列名", "输出字段名"])
-        self.col_map_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.col_map_table.setMaximumHeight(150)
-        layout.addWidget(self.col_map_table)
-
-        # 高级选项（可折叠）
-        self.chk_advanced = QCheckBox("▸ 高级表格检测选项")
-        self.chk_advanced.toggled.connect(self._toggle_advanced)
-        layout.addWidget(self.chk_advanced)
-
-        self.adv_widget = QWidget()
-        adv_layout = QVBoxLayout(self.adv_widget)
-        adv_layout.setContentsMargins(20, 0, 0, 0)
-
-        adv_row1 = QHBoxLayout()
-        adv_row1.addWidget(QLabel("列策略:"))
-        self.tbl_v_strategy = QComboBox()
-        self.tbl_v_strategy.addItems(TABLE_STRATEGIES)
-        self.tbl_v_strategy.setCurrentText("lines")
-        adv_row1.addWidget(self.tbl_v_strategy)
-        adv_row1.addWidget(QLabel("行策略:"))
-        self.tbl_h_strategy = QComboBox()
-        self.tbl_h_strategy.addItems(TABLE_STRATEGIES)
-        self.tbl_h_strategy.setCurrentText("lines")
-        adv_row1.addWidget(self.tbl_h_strategy)
-        adv_layout.addLayout(adv_row1)
-
-        adv_row2 = QHBoxLayout()
-        adv_row2.addWidget(QLabel("X容差:"))
-        self.tbl_x_tol = QSpinBox(); self.tbl_x_tol.setRange(0, 20); self.tbl_x_tol.setValue(3)
-        adv_row2.addWidget(self.tbl_x_tol)
-        adv_row2.addWidget(QLabel("Y容差:"))
-        self.tbl_y_tol = QSpinBox(); self.tbl_y_tol.setRange(0, 20); self.tbl_y_tol.setValue(3)
-        adv_row2.addStretch()
-        adv_layout.addLayout(adv_row2)
-
-        self.adv_widget.setVisible(False)
-        layout.addWidget(self.adv_widget)
+        self.btn_test_tc = QPushButton("测试定位（预览高亮表头）")
+        self.btn_test_tc.clicked.connect(self._open_preview_table_column)
+        layout.addWidget(self.btn_test_tc)
         layout.addStretch()
         return grp
-
-    def _toggle_advanced(self, checked: bool):
-        self.adv_widget.setVisible(checked)
-        self.chk_advanced.setText("▾ 高级表格检测选项" if checked else "▸ 高级表格检测选项")
 
     # ── 规则列表操作 ─────────────────────────────────────
 
@@ -267,12 +232,12 @@ class ConfigDialog(QDialog):
         self.rule_table.blockSignals(True)
         self.rule_table.setRowCount(len(self.rules))
         for i, rule in enumerate(self.rules):
-            mode_text = {"coordinate": "坐标提取", "keyword": "关键词匹配", "table": "表格提取"}.get(
+            mode_text = {"coordinate": "坐标提取", "anchor": "锚点提取", "table_column": "表格列提取"}.get(
                 rule.get("mode", "coordinate"), "坐标提取")
             self.rule_table.setItem(i, 0, QTableWidgetItem(rule.get("name", "")))
             mode_combo = QComboBox()
-            mode_combo.addItems(["坐标提取", "关键词匹配", "表格提取"])
-            mode_idx = {"coordinate": 0, "keyword": 1, "table": 2}.get(rule.get("mode", "coordinate"), 0)
+            mode_combo.addItems(["坐标提取", "锚点提取", "表格列提取"])
+            mode_idx = {"coordinate": 0, "anchor": 1, "table_column": 2}.get(rule.get("mode", "coordinate"), 0)
             mode_combo.setCurrentIndex(mode_idx)
             mode_combo.currentIndexChanged.connect(lambda idx, r=i: self._on_mode_changed(r, idx))
             self.rule_table.setCellWidget(i, 1, mode_combo)
@@ -289,7 +254,7 @@ class ConfigDialog(QDialog):
         self._show_params(row)
 
     def _on_mode_changed(self, row: int, idx: int):
-        mode = ["coordinate", "keyword", "table"][idx]
+        mode = ["coordinate", "anchor", "table_column"][idx]
         self.rules[row]["mode"] = mode
         # 为新模式补充默认字段
         if mode == "coordinate":
@@ -297,14 +262,13 @@ class ConfigDialog(QDialog):
             self.rules[row].setdefault("y1", 0)
             self.rules[row].setdefault("x2", 0)
             self.rules[row].setdefault("y2", 0)
-        elif mode == "keyword":
-            self.rules[row].setdefault("keyword", "")
+        elif mode == "anchor":
+            self.rules[row].setdefault("anchor_text", "")
             self.rules[row].setdefault("direction", "right")
             self.rules[row].setdefault("range", 200)
-        elif mode == "table":
-            self.rules[row].setdefault("table_region", [])
-            self.rules[row].setdefault("column_mapping", {})
-            self.rules[row].setdefault("table_settings", {})
+        elif mode == "table_column":
+            self.rules[row].setdefault("column_header", "")
+            self.rules[row].setdefault("row_number", 2)
         self._show_params(row)
 
     def _show_params(self, row: int):
@@ -313,37 +277,23 @@ class ConfigDialog(QDialog):
         mode = rule.get("mode", "coordinate")
 
         self.grp_coordinate.setVisible(mode == "coordinate")
-        self.grp_keyword.setVisible(mode == "keyword")
-        self.grp_table.setVisible(mode == "table")
+        self.grp_anchor.setVisible(mode == "anchor")
+        self.grp_table.setVisible(mode == "table_column")
 
         if mode == "coordinate":
             self.ctx_x1.setValue(int(rule.get("x1", 0)))
             self.ctx_y1.setValue(int(rule.get("y1", 0)))
             self.ctx_x2.setValue(int(rule.get("x2", 0)))
             self.ctx_y2.setValue(int(rule.get("y2", 0)))
-        elif mode == "keyword":
-            self.kw_keyword.setText(rule.get("keyword", ""))
+        elif mode == "anchor":
+            self.kw_keyword.setText(rule.get("anchor_text", ""))
             dir_idx = {"right": 0, "below": 1, "left": 2, "above": 3}.get(
                 rule.get("direction", "right"), 0)
             self.kw_direction.setCurrentIndex(dir_idx)
             self.kw_range.setValue(int(rule.get("range", 200)))
-        elif mode == "table":
-            region = rule.get("table_region", [])
-            if region and len(region) == 4:
-                self.lbl_table_region.setText(
-                    f"表格区域: ({region[0]}, {region[1]}) - ({region[2]}, {region[3]})")
-            else:
-                self.lbl_table_region.setText("表格区域: 未框选")
-            mapping = rule.get("column_mapping", {})
-            self.col_map_table.setRowCount(len(mapping))
-            for i, (src, dst) in enumerate(mapping.items()):
-                self.col_map_table.setItem(i, 0, QTableWidgetItem(src))
-                self.col_map_table.setItem(i, 1, QTableWidgetItem(dst))
-            settings = rule.get("table_settings", {})
-            self.tbl_v_strategy.setCurrentText(settings.get("vertical_strategy", "lines"))
-            self.tbl_h_strategy.setCurrentText(settings.get("horizontal_strategy", "lines"))
-            self.tbl_x_tol.setValue(int(settings.get("intersection_x_tolerance", 3)))
-            self.tbl_y_tol.setValue(int(settings.get("intersection_y_tolerance", 3)))
+        elif mode == "table_column":
+            self.tc_column_header.setText(rule.get("column_header", ""))
+            self.tc_row_number.setValue(int(rule.get("row_number", 2)))
 
     def _add_rule(self):
         rule = {"name": "新字段", "mode": "coordinate", "page_range": "第1页",
@@ -399,30 +349,13 @@ class ConfigDialog(QDialog):
             rule["y1"] = self.ctx_y1.value()
             rule["x2"] = self.ctx_x2.value()
             rule["y2"] = self.ctx_y2.value()
-        elif mode == "keyword":
-            rule["keyword"] = self.kw_keyword.text()
+        elif mode == "anchor":
+            rule["anchor_text"] = self.kw_keyword.text()
             rule["direction"] = ["right", "below", "left", "above"][self.kw_direction.currentIndex()]
             rule["range"] = self.kw_range.value()
-        elif mode == "table":
-            # 表格区域通过预览框选设置，这里只保存列名映射和高级参数
-            mapping = {}
-            for i in range(self.col_map_table.rowCount()):
-                src_item = self.col_map_table.item(i, 0)
-                dst_item = self.col_map_table.item(i, 1)
-                if src_item and dst_item:
-                    src = src_item.text().strip()
-                    dst = dst_item.text().strip()
-                    if src and dst:
-                        mapping[src] = dst
-            rule["column_mapping"] = mapping
-            rule["table_settings"] = {
-                "vertical_strategy": self.tbl_v_strategy.currentText(),
-                "horizontal_strategy": self.tbl_h_strategy.currentText(),
-                "intersection_x_tolerance": self.tbl_x_tol.value(),
-                "intersection_y_tolerance": self.tbl_y_tol.value(),
-                "snap_x_tolerance": self.tbl_x_tol.value(),
-                "snap_y_tolerance": self.tbl_y_tol.value(),
-            }
+        elif mode == "table_column":
+            rule["column_header"] = self.tc_column_header.text()
+            rule["row_number"] = self.tc_row_number.value()
 
     # ── PDF 预览集成 ──────────────────────────────────────
 
@@ -453,44 +386,36 @@ class ConfigDialog(QDialog):
         self._preview_dlg.show()
 
     def _open_preview_keyword(self):
-        """关键词模式：打开预览并高亮关键词。"""
+        """锚点模式：打开预览并高亮所有锚点关键词。"""
         self._save_current_params()
         path, _ = QFileDialog.getOpenFileName(self, "选择 PDF 测试文件", "", "PDF 文件 (*.pdf)")
         if not path:
             return
         keywords = []
         for rule in self.rules:
-            if rule.get("mode") == "keyword" and rule.get("keyword"):
-                keywords.append(rule["keyword"])
+            if rule.get("mode") == "anchor" and rule.get("anchor_text"):
+                keywords.append(rule["anchor_text"])
         self._preview_dlg = PdfPreviewDialog(path, self)
-        self._preview_dlg.set_mode("keyword")
+        self._preview_dlg.set_mode("anchor")
         self._preview_dlg.set_keywords(keywords)
         self._preview_dlg.finished.connect(self._on_preview_closed)
         self._preview_dlg.show()
 
-    def _open_preview_table(self):
-        """表格模式：打开预览框选表格区域，自动识别列名。"""
+    def _open_preview_table_column(self):
+        """表格列模式：打开预览并高亮表头关键词。"""
         self._save_current_params()
         row = self.rule_table.currentRow()
         if row < 0:
             QMessageBox.warning(self, "提示", "请先选择目标规则")
             return
+        rule = self.rules[row]
         path, _ = QFileDialog.getOpenFileName(self, "选择 PDF 预览文件", "", "PDF 文件 (*.pdf)")
         if not path:
             return
+        keywords = [rule.get("column_header", "")]
         self._preview_dlg = PdfPreviewDialog(path, self)
-        self._preview_dlg.set_mode("table")
-
-        def on_table_region(x1, y1, x2, y2, page):
-            rule = self.rules[row]
-            rule["table_region"] = [x1, y1, x2, y2]
-            self.lbl_table_region.setText(
-                f"表格区域: ({x1}, {y1}) - ({x2}, {y2})")
-            # 自动识别列名
-            self._auto_detect_columns(path, [x1, y1, x2, y2], page)
-            self._save_current_params()
-
-        self._preview_dlg.table_region_confirmed.connect(on_table_region)
+        self._preview_dlg.set_mode("table_column")
+        self._preview_dlg.set_keywords(keywords)
         self._preview_dlg.finished.connect(self._on_preview_closed)
         self._preview_dlg.show()
 
