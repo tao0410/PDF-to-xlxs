@@ -1,0 +1,105 @@
+/* PDF信息提取工具 - 全局样式 (UI.md 视觉规范) */
+
+* {
+    font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+    font-size: 12px;
+}
+
+QMainWindow, QDialog, QWidget {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+QLabel {
+    color: #000000;
+}
+
+QLabel[class="hint"] {
+    color: #666666;
+    font-size: 11px;
+}
+
+QPushButton {
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 2px;
+    padding: 6px 16px;
+    color: #000000;
+}
+
+QPushButton:hover {
+    background-color: #E5F3FF;
+    border: 1px solid #0078D7;
+}
+
+QPushButton:pressed {
+    background-color: #CCE4FF;
+    border: 1px solid #0078D7;
+}
+
+QPushButton:disabled {
+    background-color: #F0F0F0;
+    border: 1px solid #CCCCCC;
+    color: #999999;
+}
+
+QPushButton[class="primary"] {
+    background-color: #0078D7;
+    color: #FFFFFF;
+    border: 1px solid #0078D7;
+}
+
+QPushButton[class="primary"]:hover {
+    background-color: #106EBE;
+}
+
+QPushButton[class="primary"]:pressed {
+    background-color: #005A9E;
+}
+
+QPushButton[class="primary"]:disabled {
+    background-color: #CCCCCC;
+    color: #999999;
+    border: 1px solid #CCCCCC;
+}
+
+QTableWidget {
+    border: 1px solid #CCCCCC;
+    gridline-color: #CCCCCC;
+    selection-background-color: #CCE4FF;
+    alternate-background-color: #F9F9F9;
+}
+
+QHeaderView::section {
+    background-color: #E5F3FF;
+    color: #000000;
+    font-weight: bold;
+    border: 1px solid #CCCCCC;
+    padding: 4px 6px;
+}
+
+QProgressBar {
+    border: 1px solid #CCCCCC;
+    border-radius: 2px;
+    background-color: #E0E0E0;
+    height: 6px;
+    text-align: center;
+}
+
+QProgressBar::chunk {
+    background-color: #0078D7;
+}
+
+QScrollArea {
+    border: 1px solid #CCCCCC;
+}
+
+QLineEdit, QComboBox {
+    border: 1px solid #CCCCCC;
+    border-radius: 2px;
+    padding: 4px 6px;
+}
+
+QLineEdit:focus, QComboBox:focus {
+    border: 1px solid #0078D7;
+}

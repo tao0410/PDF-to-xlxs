@@ -1,0 +1,32 @@
+2026-06-08 01:30:30 [INFO] config_manager: 配置已加载: D:\AppData\workspace\pdf_extractor\default.cfg
+2026-06-08 01:32:49 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-08 01:32:50 [INFO] session_manager: 会话已保存
+2026-06-08 01:35:38 [INFO] config_manager: 配置已保存: D:\AppData\workspace\pdf_extractor\default.cfg
+2026-06-08 01:35:41 [INFO] session_manager: 会话已保存
+2026-06-08 01:35:53 [INFO] session_manager: 会话已保存
+2026-06-08 01:35:55 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-08 01:35:56 [INFO] session_manager: 会话已保存
+2026-06-08 01:37:02 [INFO] config_manager: 配置已保存: D:\AppData\workspace\pdf_extractor\default.cfg
+2026-06-08 01:37:04 [INFO] session_manager: 会话已保存
+2026-06-08 01:37:13 [INFO] config_manager: 配置已保存: D:\AppData\workspace\pdf_extractor\default.cfg
+2026-06-08 01:37:14 [INFO] session_manager: 会话已保存
+2026-06-08 01:37:16 [INFO] session_manager: 会话已保存
+2026-06-08 01:37:27 [INFO] session_manager: 会话已保存
+2026-06-08 01:37:27 [INFO] session_manager: 会话已保存
+2026-06-08 02:02:16 [INFO] config_manager: 配置已加载: D:\AppData\workspace\pdf_extractor\default.cfg
+2026-06-08 02:02:17 [INFO] session_manager: 会话已恢复
+2026-06-08 02:02:17 [INFO] main_window: 会话已恢复
+2026-06-08 02:02:33 [INFO] session_manager: 会话已保存
+2026-06-08 02:03:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-08 02:03:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-08 02:03:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
+2026-06-08 02:03:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
+2026-06-08 02:03:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
+2026-06-08 02:03:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
+2026-06-08 02:03:10 [INFO] session_manager: 会话已保存
+2026-06-08 02:03:14 [INFO] session_manager: 会话已保存
+2026-06-08 02:03:19 [INFO] session_manager: 会话已保存
+2026-06-08 02:03:22 [INFO] session_manager: 会话已保存
+2026-06-08 02:03:27 [INFO] excel_generator: Excel 已生成: D:/AppData/workspace/pdf_extractor/PDF信息汇总表_20260608_020323.xlsx
+2026-06-08 02:03:30 [INFO] main_window: Excel 导出成功: D:/AppData/workspace/pdf_extractor/PDF信息汇总表_20260608_020323.xlsx
+2026-06-08 02:04:05 [INFO] session_manager: 会话已保存

@@ -1,1 +1,0 @@
-- [PDF提取工具 Win7 打包修复](pdf-extractor-win7-packaging-fix.md) — 7 文件修改汇总：spec 资源内嵌、`get_app_dir`/`get_exe_dir` 路径分离、build.bat 打包流程、Win7 常见报错速查表

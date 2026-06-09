@@ -1,33 +1,100 @@
 {
   "config": {
     "rule_name": "默认规则",
-    "regions": [
+    "rules": [
       {
         "name": "更改单编号",
+        "mode": "anchor",
         "page_range": "第1页",
         "x1": 305,
         "y1": 798,
         "x2": 433,
         "y2": 812,
-        "data_type": "文本"
+        "data_type": "文本",
+        "keyword": "",
+        "direction": "right",
+        "range": 200,
+        "anchor_text": "编号："
       },
       {
         "name": "工艺规程编号",
+        "mode": "table_column",
         "page_range": "第1页",
         "x1": 77,
         "y1": 655,
         "x2": 157,
         "y2": 673,
-        "data_type": "文本"
+        "data_type": "文本",
+        "keyword": "",
+        "direction": "right",
+        "range": 200,
+        "table_region": [
+          47,
+          564,
+          567,
+          702
+        ],
+        "column_mapping": {
+          "序号": "序号",
+          "更改对象编号": "更改对象编号",
+          "更改标记": "更改标记",
+          "改前版本": "改前版本",
+          "改后版本": "改后版本",
+          "更改内容": "更改内容",
+          "更改依据": "更改依据",
+          "更改性质": "更改性质"
+        },
+        "table_settings": {
+          "vertical_strategy": "lines",
+          "horizontal_strategy": "lines",
+          "intersection_x_tolerance": 3,
+          "intersection_y_tolerance": 3,
+          "snap_x_tolerance": 3,
+          "snap_y_tolerance": 3
+        },
+        "anchor_text": "",
+        "column_header": "更改对象编号",
+        "row_number": 2
       },
       {
         "name": "更改内容",
+        "mode": "table_column",
         "page_range": "第1页",
         "x1": 244,
         "y1": 643,
         "x2": 384,
         "y2": 673,
-        "data_type": "日期"
+        "data_type": "日期",
+        "keyword": "",
+        "direction": "right",
+        "range": 200,
+        "anchor_text": "",
+        "column_header": "更改内容",
+        "row_number": 2
+      },
+      {
+        "name": "更改依据",
+        "mode": "table_column",
+        "page_range": "第1页",
+        "x1": 0,
+        "y1": 0,
+        "x2": 0,
+        "y2": 0,
+        "data_type": "文本",
+        "column_header": "更改依据",
+        "row_number": 2
+      },
+      {
+        "name": "更改性质",
+        "mode": "table_column",
+        "page_range": "第1页",
+        "x1": 0,
+        "y1": 0,
+        "x2": 0,
+        "y2": 0,
+        "data_type": "文本",
+        "column_header": "更改性质",
+        "row_number": 2
       }
     ]
   },
@@ -36,94 +103,63 @@
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000155（公开）.pdf",
       "size": 70511,
-      "status": "已确认",
+      "status": "待处理",
       "exists": true
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000169（公开）.pdf",
       "size": 69903,
-      "status": "已确认",
+      "status": "待处理",
       "exists": true
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000194（公开）.pdf",
       "size": 69906,
-      "status": "已确认",
+      "status": "待处理",
       "exists": true
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000246（公开）.pdf",
       "size": 79532,
-      "status": "已确认",
+      "status": "待处理",
       "exists": true
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000383（公开）.pdf",
       "size": 69278,
-      "status": "已确认",
+      "status": "待处理",
       "exists": true
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000422（公开）.pdf",
       "size": 70210,
-      "status": "已确认",
+      "status": "待处理",
       "exists": true
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000423（公开）.pdf",
       "size": 69185,
-      "status": "已确认",
+      "status": "待处理",
       "exists": true
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000483（公开）.pdf",
       "size": 70949,
-      "status": "已确认",
+      "status": "待处理",
+      "exists": true
+    },
+    {
+      "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000484(公开）.pdf",
+      "size": 71156,
+      "status": "待处理",
+      "exists": true
+    },
+    {
+      "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000486(公开）.pdf",
+      "size": 51875,
+      "status": "待处理",
       "exists": true
     }
   ],
-  "confirmed_records": [
-    {
-      "更改单编号": "TZY15-ECO-GY-000169",
-      "工艺规程编号": "TZY15-IW-0111",
-      "更改内容": "依据TZY15-ECO- 000078，新增视图及尺寸",
-      "来源文件": "15-ECO-GY-000169（公开）.pdf"
-    },
-    {
-      "更改单编号": "TZY15-ECO-GY-000194",
-      "工艺规程编号": "TZY15-IW-0093",
-      "更改内容": "依据TZY15-ECO- 000085，剖视图A-A新增",
-      "来源文件": "15-ECO-GY-000194（公开）.pdf"
-    },
-    {
-      "更改单编号": "TZY15-ECO-GY-000246",
-      "工艺规程编号": "TZY15-L.IN-",
-      "更改内容": "依据设计更改单TZY15- ECO-000111，5工序1工步",
-      "来源文件": "15-ECO-GY-000246（公开）.pdf"
-    },
-    {
-      "更改单编号": "TZY15-ECO-GY-000383",
-      "工艺规程编号": "TZY15-IW-0120",
-      "更改内容": "依据TZY15-ECO- 000130，阶段S转D。制成",
-      "来源文件": "15-ECO-GY-000383（公开）.pdf"
-    },
-    {
-      "更改单编号": "TZY15-ECO-GY-000422",
-      "工艺规程编号": "TZY15-IN-0042",
-      "更改内容": "增加滑轨组件单独交付时 需称重并记录。增加“用",
-      "来源文件": "15-ECO-GY-000422（公开）.pdf"
-    },
-    {
-      "更改单编号": "TZY15-ECO-GY-000423",
-      "工艺规程编号": "TZY15-IN-0029",
-      "更改内容": "增加滑轨组件单独交付时 需称重并记录。在制品",
-      "来源文件": "15-ECO-GY-000423（公开）.pdf"
-    },
-    {
-      "更改单编号": "TZY15-ECO-GY-000483",
-      "工艺规程编号": "TZY15-IW-0117",
-      "更改内容": "完善工艺，增加检验要求 。制成品和在制品无影响",
-      "来源文件": "15-ECO-GY-000483（公开）.pdf"
-    }
-  ]
+  "confirmed_records": []
 }
