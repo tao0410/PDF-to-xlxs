@@ -1,118 +1,97 @@
 # -*- coding: utf-8 -*-
-"""多文件模式下的批量确认窗口。"""
+"""批量确认弹窗 (v2.2 demo-aligned)。"""
 
 from typing import Dict, List, Optional
-
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QDialog,
-    QHBoxLayout,
-    QHeaderView,
-    QLabel,
-    QMessageBox,
-    QPushButton,
-    QTableWidget,
-    QVBoxLayout,
+    QDialog, QFrame, QHBoxLayout, QHeaderView, QLabel,
+    QPushButton, QShortcut, QTableWidget, QVBoxLayout,
 )
-
 from table_utils import populate_table, table_to_records
 
 SOURCE_COL = "来源文件"
 
 
 class BatchConfirmDialog(QDialog):
-    """批量确认对话框。"""
-
-    def __init__(
-        self,
-        columns: List[str],
-        records: List[dict],
-        stats: dict,
-        field_issues_map: Optional[Dict[int, Dict[str, str]]] = None,
-        parent=None,
-    ):
+    def __init__(self, columns: List[str], records: List[dict],
+                 stats: dict, field_issues_map: Optional[Dict[int, Dict[str, str]]] = None,
+                 parent=None):
         super().__init__(parent)
         self.setWindowTitle("批量确认提取内容")
-        self.resize(900, 500)
-        self._columns = columns
-        self._records = records
+        self.resize(580, 520)
+        self.setMinimumSize(480, 360)
+        self._cols = columns
+        self._recs = records
         self._stats = stats
-        self._field_issues_map = field_issues_map or {}
+        self._im = field_issues_map or {}
         self._confirmed = False
-        self._reextract_all = False
+        self._reextract = False
         self._init_ui()
+        QShortcut("Return", self, self._on_confirm)
 
     def _init_ui(self):
-        layout = QVBoxLayout(self)
+        lo = QVBoxLayout(self)
+        lo.setContentsMargins(24, 28, 24, 28)
+        lo.setSpacing(14)
+        lo.addWidget(QLabel("批量确认提取内容", objectName="section-title"))
+
+        # Stats row with semantic colors
         s = self._stats
-        layout.addWidget(
-            QLabel(
-                f"处理结果：共处理{s.get('total', 0)}个文件，"
-                f"成功{s.get('success', 0)}个，失败{s.get('failed', 0)}个，"
-                f"总记录数{s.get('records', 0)}条"
-            )
-        )
+        sr = QHBoxLayout()
+        sr.setSpacing(16)
+        items = [
+            ("共处理", str(s.get('total', 0)), "#0F172A"),
+            ("成功", str(s.get('success', 0)), "#15803D"),
+            ("失败", str(s.get('failed', 0)), "#DC2626"),
+            ("总记录", str(s.get('records', 0)), "#0F172A"),
+        ]
+        for label, val, color in items:
+            f = QFrame(objectName="stat-card")
+            fl = QVBoxLayout(f)
+            fl.setContentsMargins(16, 8, 16, 8)
+            fl.setSpacing(2)
+            vl = QLabel(val, objectName="stat-value", alignment=Qt.AlignCenter)
+            vl.setStyleSheet(f"color: {color};")
+            ll = QLabel(label, objectName="stat-label", alignment=Qt.AlignCenter)
+            fl.addWidget(vl)
+            fl.addWidget(ll)
+            sr.addWidget(f)
+        sr.addStretch()
+        lo.addLayout(sr)
 
         self.table = QTableWidget()
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.setSelectionMode(QTableWidget.ExtendedSelection)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        layout.addWidget(self.table)
+        self.table.verticalHeader().setVisible(False)
+        lo.addWidget(self.table, 1)
+        populate_table(self.table, self._cols, self._recs, self._im)
 
-        populate_table(self.table, self._columns, self._records, self._field_issues_map)
+        bl = QHBoxLayout()
+        bl.addStretch()
+        for txt, obj in [("全部确认", "btn-primary"), ("重新提取全部", "btn-secondary"), ("取消", "btn-ghost")]:
+            b = QPushButton(txt, objectName=obj)
+            bl.addWidget(b)
+        lo.addLayout(bl)
 
-        row_btn = QHBoxLayout()
-        self.btn_add_row = QPushButton("添加行")
-        self.btn_delete_rows = QPushButton("删除选中行")
-        row_btn.addWidget(self.btn_add_row)
-        row_btn.addWidget(self.btn_delete_rows)
-        row_btn.addStretch()
-        layout.addLayout(row_btn)
+        btns = [bl.itemAt(i).widget() for i in range(bl.count()) if bl.itemAt(i).widget()]
+        for b in btns:
+            if b and b.text() == "全部确认":
+                b.clicked.connect(self._on_confirm)
+            elif b and b.text() == "重新提取全部":
+                b.clicked.connect(self._on_reextract)
+            elif b and b.text() == "取消":
+                b.clicked.connect(self.reject)
 
-        btn_layout = QHBoxLayout()
-        btn_layout.addStretch()
-        self.btn_confirm_all = QPushButton("全部确认")
-        self.btn_reextract_all = QPushButton("重新提取全部")
-        self.btn_cancel = QPushButton("取消")
-        btn_layout.addWidget(self.btn_confirm_all)
-        btn_layout.addWidget(self.btn_reextract_all)
-        btn_layout.addWidget(self.btn_cancel)
-        layout.addLayout(btn_layout)
-
-        self.btn_add_row.clicked.connect(self._add_row)
-        self.btn_delete_rows.clicked.connect(self._delete_rows)
-        self.btn_confirm_all.clicked.connect(self._on_confirm_all)
-        self.btn_reextract_all.clicked.connect(self._on_reextract_all)
-        self.btn_cancel.clicked.connect(self.reject)
-
-    def _add_row(self):
-        row = self.table.rowCount()
-        self.table.insertRow(row)
-        for col_idx, col_name in enumerate(self._columns):
-            from PyQt5.QtWidgets import QTableWidgetItem
-            self.table.setItem(row, col_idx, QTableWidgetItem(""))
-
-    def _delete_rows(self):
-        rows = sorted({idx.row() for idx in self.table.selectedIndexes()}, reverse=True)
-        if not rows:
-            QMessageBox.information(self, "提示", "请先选择要删除的行")
-            return
-        for row in rows:
-            self.table.removeRow(row)
-
-    def _on_confirm_all(self):
-        self._records = table_to_records(self.table, self._columns)
+    def _on_confirm(self):
+        self._recs = table_to_records(self.table, self._cols)
         self._confirmed = True
         self.accept()
 
-    def _on_reextract_all(self):
-        self._reextract_all = True
+    def _on_reextract(self):
+        self._reextract = True
         self.reject()
 
-    def is_confirmed(self) -> bool:
-        return self._confirmed
-
-    def wants_reextract_all(self) -> bool:
-        return self._reextract_all
-
-    def get_records(self) -> List[dict]:
-        return table_to_records(self.table, self._columns)
+    def is_confirmed(self) -> bool: return self._confirmed
+    def wants_reextract_all(self) -> bool: return self._reextract
+    def get_records(self) -> List[dict]: return table_to_records(self.table, self._cols)

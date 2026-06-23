@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
-"""提取规则配置窗口。"""
+"""提取规则配置窗口 (v2.2 三栏布局 + PDF 预览)。"""
 
 import logging
 import os
+from typing import List, Optional
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QImage, QPainter, QPen, QPixmap, QKeySequence
 from PyQt5.QtWidgets import (
-    QCheckBox,
     QComboBox,
     QDialog,
     QFileDialog,
+    QFrame,
     QGroupBox,
     QHBoxLayout,
     QHeaderView,
@@ -17,6 +19,9 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QMessageBox,
     QPushButton,
+    QScrollArea,
+    QShortcut,
+    QSizePolicy,
     QSpinBox,
     QTableWidget,
     QTableWidgetItem,
@@ -25,37 +30,216 @@ from PyQt5.QtWidgets import (
 )
 
 from config_manager import (
-    DATA_TYPES,
-    ANCHOR_DIRECTIONS,
-    ConfigManager,
+    DATA_TYPES, ANCHOR_DIRECTIONS, ConfigManager,
 )
 from pdf_preview_dialog import PdfPreviewDialog
 
 logger = logging.getLogger(__name__)
 
-LIST_COLUMNS = ["字段名", "提取模式", "页面范围", "数据类型"]
+LIST_COLUMNS = ["字段", "模式", "页面范围", "数据类型"]
+
+_DPI = 150
+_HL = {
+    "coordinate": (220, 38, 38),
+    "anchor": (245, 158, 11),
+    "table_column": (37, 99, 235),
+}
+
+
+class PdfPreviewWidget(QWidget):
+    """PDF 实时预览控件。"""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._doc = None
+        self._page_idx = 0
+        self._total = 0
+        self._zoom_fit = True
+        self._hl_bbox = None
+        self._hl_color = _HL["coordinate"]
+        self._hl_label = ""
+        self._init_ui()
+
+    def _init_ui(self):
+        lo = QVBoxLayout(self)
+        lo.setContentsMargins(0, 0, 0, 0)
+        lo.setSpacing(8)
+
+        hdr = QHBoxLayout()
+        hdr.addWidget(QLabel("PDF 预览", objectName="section-title"))
+        hdr.addStretch()
+        self.lbl_page = QLabel(objectName="hint-text")
+        hdr.addWidget(self.lbl_page)
+        lo.addLayout(hdr)
+
+        self.scroll = QScrollArea()
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setAlignment(Qt.AlignCenter)
+        self.pic = QLabel(alignment=Qt.AlignCenter)
+        self.pic.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.pic.setMinimumHeight(280)
+        self.scroll.setWidget(self.pic)
+        lo.addWidget(self.scroll, 1)
+
+        self.lbl_hl = QLabel(objectName="hint-text")
+        self.lbl_hl.setVisible(False)
+        lo.addWidget(self.lbl_hl)
+
+        self._show_placeholder()
+
+        nav = QHBoxLayout()
+        self.btn_prev = QPushButton("上一页")
+        self.btn_next = QPushButton("下一页")
+        self.btn_fit = QPushButton("适应窗口")
+        self.btn_actual = QPushButton("实际大小")
+        for b in (self.btn_prev, self.btn_next, self.btn_fit, self.btn_actual):
+            b.setObjectName("btn-small")
+        nav.addWidget(self.btn_prev)
+        nav.addWidget(self.btn_next)
+        nav.addStretch()
+        nav.addWidget(self.btn_fit)
+        nav.addWidget(self.btn_actual)
+        lo.addLayout(nav)
+
+        self.btn_prev.clicked.connect(self._prev)
+        self.btn_next.clicked.connect(self._next)
+        self.btn_fit.clicked.connect(lambda: self._set_zoom(True))
+        self.btn_actual.clicked.connect(lambda: self._set_zoom(False))
+        self._update_nav()
+
+    def _show_placeholder(self):
+        self.pic.setText("PDF preview - please load a PDF file")
+        self.pic.setObjectName("preview-placeholder")
+        self.pic.style().unpolish(self.pic)
+        self.pic.style().polish(self.pic)
+
+    def load(self, path: str):
+        try:
+            import fitz
+        except ImportError:
+            self.pic.setText("PyMuPDF 未安装，无法预览")
+            return
+        try:
+            if self._doc:
+                self._doc.close()
+            self._doc = fitz.open(path)
+            self._total = len(self._doc)
+            self._page_idx = 0
+            self._render()
+        except Exception as e:
+            logger.exception("PDF 预览加载失败")
+            self._show_placeholder()
+
+    def set_hl(self, bbox, color=None, label=""):
+        self._hl_bbox = bbox
+        if color:
+            self._hl_color = color
+        self._hl_label = label
+        if bbox:
+            self.lbl_hl.setText(
+                f"高亮: ({bbox[0]},{bbox[1]})-({bbox[2]},{bbox[3]})"
+                + (f" [{label}]" if label else ""))
+            self.lbl_hl.setVisible(True)
+        else:
+            self.lbl_hl.setVisible(False)
+        if self._doc:
+            self._render()
+
+    def go_page(self, n: int):
+        if not self._doc:
+            return
+        idx = max(0, min(n - 1, self._total - 1))
+        if idx != self._page_idx:
+            self._page_idx = idx
+            self._render()
+
+    def close_doc(self):
+        if self._doc:
+            self._doc.close()
+            self._doc = None
+
+    # ── internals ──
+
+    def _prev(self):
+        if self._page_idx > 0:
+            self._page_idx -= 1
+            self._render()
+
+    def _next(self):
+        if self._page_idx < self._total - 1:
+            self._page_idx += 1
+            self._render()
+
+    def _set_zoom(self, fit: bool):
+        self._zoom_fit = fit
+        self._render()
+
+    def _update_nav(self):
+        h = self._doc is not None
+        self.btn_prev.setEnabled(h and self._page_idx > 0)
+        self.btn_next.setEnabled(h and self._page_idx < self._total - 1)
+        self.lbl_page.setText(
+            f"第 {self._page_idx + 1} / {self._total} 页" if h else "")
+
+    def _render(self):
+        if not self._doc:
+            self._show_placeholder()
+            return
+        try:
+            page = self._doc[self._page_idx]
+            r = page.rect
+            if self._zoom_fit:
+                vw = max(self.scroll.viewport().width() - 20, 200)
+                z = vw / r.width if r.width else 1.0
+            else:
+                z = 1.0
+            mat = fitz.Matrix(z, z)
+            pix = page.get_pixmap(matrix=mat, colorspace=fitz.csRGB)
+            img = QImage(pix.samples, pix.width, pix.height, pix.stride, QImage.Format_RGB888)
+            pm = QPixmap.fromImage(img)
+
+            if self._hl_bbox:
+                painter = QPainter(pm)
+                pen = QPen()
+                pen.setColor(self._hl_color[0], self._hl_color[1], self._hl_color[2])
+                pen.setWidth(2)
+                painter.setPen(pen)
+                x0, y0, x1, y1 = self._hl_bbox
+                px0, py0 = x0 * z, (r.height - y1) * z
+                pw, ph = (x1 - x0) * z, (y1 - y0) * z
+                painter.drawRect(int(px0), int(py0), int(pw), int(ph))
+                painter.end()
+
+            self.pic.setPixmap(pm)
+            self.pic.setObjectName("")
+            self.pic.setStyleSheet(
+                "QLabel { background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0; }")
+            self._update_nav()
+        except Exception as e:
+            logger.exception("PDF 渲染失败")
 
 
 class ConfigDialog(QDialog):
-    """提取规则配置对话框。
+    """提取规则配置对话框 (v2.2)。"""
 
-    左侧：规则列表（QTableWidget）
-    右侧：模式参数面板（根据模式动态切换）
-    """
+    _last_row = 0
 
-    def __init__(self, config: dict, config_path: str = "", parent=None):
+    def __init__(self, config: dict, config_path: str = "",
+                 pending_paths: List[str] = None, parent=None):
         super().__init__(parent)
         self.setWindowTitle("配置提取规则")
-        self.resize(950, 600)
+        self.resize(1100, 620)
+        self.setMinimumSize(900, 520)
         self.config = dict(config)
         self.config_path = config_path
+        self._pp = pending_paths or []
+        self._fullscreen = False
+
         self.rules = list(self.config.get("rules", []))
-        # 兼容旧 regions 格式
         if not self.rules and "regions" in self.config:
             for r in self.config["regions"]:
                 self.rules.append({
-                    "name": r.get("name", ""),
-                    "mode": "coordinate",
+                    "name": r.get("name", ""), "mode": "coordinate",
                     "page_range": r.get("page_range", "第1页"),
                     "x1": r.get("x1", 0), "y1": r.get("y1", 0),
                     "x2": r.get("x2", 0), "y2": r.get("y2", 0),
@@ -64,440 +248,501 @@ class ConfigDialog(QDialog):
         self._preview_dlg = None
         self._init_ui()
         self._refresh_table()
+        self._setup_shortcuts()
 
-    # ── UI 搭建 ───────────────────────────────────────────
+        if self.rules and ConfigDialog._last_row < len(self.rules):
+            self.rule_table.selectRow(ConfigDialog._last_row)
+
+        if self._pp:
+            self._pw.load(self._pp[0])
+        self._update_preview()
+
+    # ═══════════════ UI ═══════════════
 
     def _init_ui(self):
-        main_layout = QVBoxLayout(self)
+        ml = QVBoxLayout(self)
+        ml.setContentsMargins(16, 16, 16, 16)
+        ml.setSpacing(12)
 
-        # 规则名称
-        name_layout = QHBoxLayout()
-        name_layout.addWidget(QLabel("规则名称："))
-        self.edit_rule_name = QLineEdit()
-        self.edit_rule_name.setText(self.config.get("rule_name", "默认规则"))
-        name_layout.addWidget(self.edit_rule_name)
-        main_layout.addLayout(name_layout)
+        # ── Top: rule name + fullscreen ──
+        top = QHBoxLayout()
+        top.addWidget(QLabel("规则名称："))
+        self.edt_name = QLineEdit()
+        self.edt_name.setText(self.config.get("rule_name", "默认规则"))
+        self.edt_name.setMaximumWidth(320)
+        top.addWidget(self.edt_name)
+        top.addStretch()
+        self.btn_fs = QPushButton("全屏")
+        self.btn_fs.setObjectName("btn-ghost")
+        self.btn_fs.clicked.connect(self._toggle_fs)
+        top.addWidget(self.btn_fs)
+        ml.addLayout(top)
 
-        # 中间：左右分栏
-        body_layout = QHBoxLayout()
+        # ── Three columns ──
+        body = QHBoxLayout()
+        body.setSpacing(12)
 
-        # 左侧：规则列表
-        left_panel = QVBoxLayout()
+        # LEFT
+        left = QFrame(objectName="card")
+        left.setMinimumWidth(280)
+        left.setMaximumWidth(380)
+        ll = QVBoxLayout(left)
+        ll.setContentsMargins(16, 16, 16, 16)
+        ll.setSpacing(8)
+
         self.rule_table = QTableWidget()
         self.rule_table.setColumnCount(len(LIST_COLUMNS))
         self.rule_table.setHorizontalHeaderLabels(LIST_COLUMNS)
         self.rule_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.rule_table.setSelectionBehavior(QTableWidget.SelectRows)
-        self.rule_table.setSelectionMode(QTableWidget.SingleSelection)
-        self.rule_table.setMaximumWidth(420)
-        left_panel.addWidget(self.rule_table)
+        self.rule_table.setSelectionMode(QTableWidget.ExtendedSelection)
+        self.rule_table.verticalHeader().setVisible(False)
+        ll.addWidget(self.rule_table)
 
-        rule_btn_layout = QHBoxLayout()
-        self.btn_add = QPushButton("添加")
-        self.btn_delete = QPushButton("删除")
-        self.btn_up = QPushButton("上移")
-        self.btn_down = QPushButton("下移")
-        rule_btn_layout.addWidget(self.btn_add)
-        rule_btn_layout.addWidget(self.btn_delete)
-        rule_btn_layout.addWidget(self.btn_up)
-        rule_btn_layout.addWidget(self.btn_down)
-        left_panel.addLayout(rule_btn_layout)
+        lb = QHBoxLayout()
+        self.btn_sel_all = QPushButton("全选")
+        self.btn_del = QPushButton("删除选中")
+        self.btn_del.setObjectName("btn-ghost")
+        self.btn_add = QPushButton("添加行")
+        for b in (self.btn_sel_all, self.btn_del, self.btn_add):
+            b.setObjectName("btn-small")
+        lb.addWidget(self.btn_sel_all)
+        lb.addWidget(self.btn_del)
+        lb.addWidget(self.btn_add)
+        lb.addStretch()
+        ll.addLayout(lb)
+        body.addWidget(left)
 
-        body_layout.addLayout(left_panel)
+        # MIDDLE
+        mid = QFrame(objectName="card")
+        mid.setMinimumWidth(280)
+        mid.setMaximumWidth(360)
+        mml = QVBoxLayout(mid)
+        mml.setContentsMargins(20, 20, 20, 20)
+        mml.setSpacing(12)
 
-        # 右侧：参数面板（动态内容）
-        self.param_stack = QVBoxLayout()
-        self.grp_coordinate = self._build_coordinate_panel()
-        self.grp_anchor = self._build_anchor_panel()
-        self.grp_table = self._build_table_column_panel()
-        self.param_stack.addWidget(self.grp_coordinate)
-        self.param_stack.addWidget(self.grp_anchor)
-        self.param_stack.addWidget(self.grp_table)
-        self.param_stack.addStretch()
-        body_layout.addLayout(self.param_stack)
+        mh = QHBoxLayout()
+        mh.addWidget(QLabel("坐标参数", objectName="section-title"))
+        mh.addStretch()
+        self.lbl_mode = QLabel(objectName="hint-text")
+        mh.addWidget(self.lbl_mode)
+        mml.addLayout(mh)
 
-        main_layout.addLayout(body_layout)
+        # Common fields
+        for lbl_text, widget in [
+            ("区域名称", "edt_rname"), ("页面范围", "edt_page"), ("数据类型", "cmb_dtype"),
+        ]:
+            row = QHBoxLayout()
+            row.addWidget(QLabel(lbl_text + ":"))
+            row.addStretch()
+            mml.addLayout(row)
+        self.edt_rname = QLineEdit()
+        self.edt_page = QLineEdit()
+        self.edt_page.setPlaceholderText("如：第1页 / 第1-3页 / 所有页")
+        self.cmb_dtype = QComboBox()
+        self.cmb_dtype.addItems(list(DATA_TYPES))
+        mml.addWidget(self.edt_rname)
+        mml.addWidget(self.edt_page)
+        mml.addWidget(self.cmb_dtype)
 
-        # 底部按钮
-        bottom_layout = QHBoxLayout()
+        # Mode-specific panels
+        self.grp_coord = self._mk_coord()
+        self.grp_anchor = self._mk_anchor()
+        self.grp_tbl = self._mk_tbl()
+        mml.addWidget(self.grp_coord)
+        mml.addWidget(self.grp_anchor)
+        mml.addWidget(self.grp_tbl)
+        mml.addStretch()
+        body.addWidget(mid)
+
+        # RIGHT
+        self._pw = PdfPreviewWidget()
+        body.addWidget(self._pw, 1)
+        ml.addLayout(body, 1)
+
+        # ── Bottom bar ──
+        bar = QFrame(objectName="toolbar")
+        bl = QHBoxLayout(bar)
+        bl.setContentsMargins(0, 0, 0, 0)
+
+        self.btn_load = QPushButton("加载配置")
+        self.btn_load.setObjectName("btn-secondary")
+        bl.addWidget(self.btn_load)
+        bl.addStretch()
+
         self.btn_save = QPushButton("保存")
-        self.btn_save_as = QPushButton("另存为")
-        self.btn_cancel = QPushButton("取消")
-        bottom_layout.addStretch()
-        bottom_layout.addWidget(self.btn_save)
-        bottom_layout.addWidget(self.btn_save_as)
-        bottom_layout.addWidget(self.btn_cancel)
-        main_layout.addLayout(bottom_layout)
+        self.btn_save.setObjectName("btn-secondary")
+        self.btn_saveas = QPushButton("另存为")
+        self.btn_saveas.setObjectName("btn-small")
+        self.btn_close = QPushButton("关闭")
+        self.btn_close.setObjectName("btn-ghost")
+        bl.addWidget(self.btn_save)
+        bl.addWidget(self.btn_saveas)
+        bl.addWidget(self.btn_close)
+        ml.addLayout(bl)
 
-        # 信号连接
-        self.rule_table.currentCellChanged.connect(self._on_row_changed)
+        # ── Connections ──
+        self.rule_table.currentCellChanged.connect(self._on_row)
+        self.btn_sel_all.clicked.connect(lambda: self.rule_table.selectAll())
+        self.btn_del.clicked.connect(self._del_rules)
         self.btn_add.clicked.connect(self._add_rule)
-        self.btn_delete.clicked.connect(self._delete_rule)
-        self.btn_up.clicked.connect(lambda: self._move_rule(-1))
-        self.btn_down.clicked.connect(lambda: self._move_rule(1))
+        self.btn_load.clicked.connect(self._load_cfg)
         self.btn_save.clicked.connect(self._save)
-        self.btn_save_as.clicked.connect(self._save_as)
-        self.btn_cancel.clicked.connect(self.reject)
+        self.btn_saveas.clicked.connect(self._save_as)
+        self.btn_close.clicked.connect(self._close)
 
-        # 默认选中第一行
-        if self.rule_table.rowCount() > 0:
-            self.rule_table.selectRow(0)
+        # Params → preview refresh
+        for w in (self.edt_page, self.cmb_dtype):
+            if hasattr(w, 'currentTextChanged'):
+                w.currentTextChanged.connect(lambda: self._on_param())
+            elif hasattr(w, 'textChanged'):
+                w.textChanged.connect(lambda: self._on_param())
 
-    def _build_coordinate_panel(self) -> QGroupBox:
-        """坐标提取参数面板。"""
-        grp = QGroupBox("坐标提取参数")
-        layout = QVBoxLayout(grp)
-        grid = QVBoxLayout()
+    def _setup_shortcuts(self):
+        QShortcut(QKeySequence("Ctrl+S"), self, self._save)
+        QShortcut(QKeySequence.Delete, self, self._del_rules)
 
-        row1 = QHBoxLayout()
-        row1.addWidget(QLabel("X1:"))
-        self.ctx_x1 = QSpinBox(); self.ctx_x1.setRange(0, 9999); row1.addWidget(self.ctx_x1)
-        row1.addWidget(QLabel("Y1:"))
-        self.ctx_y1 = QSpinBox(); self.ctx_y1.setRange(0, 9999); row1.addWidget(self.ctx_y1)
-        grid.addLayout(row1)
+    # ═══════════════ Mode panels ═══════════════
 
-        row2 = QHBoxLayout()
-        row2.addWidget(QLabel("X2:"))
-        self.ctx_x2 = QSpinBox(); self.ctx_x2.setRange(0, 9999); row2.addWidget(self.ctx_x2)
-        row2.addWidget(QLabel("Y2:"))
-        self.ctx_y2 = QSpinBox(); self.ctx_y2.setRange(0, 9999); row2.addWidget(self.ctx_y2)
-        grid.addLayout(row2)
+    def _mk_coord(self):
+        g = QGroupBox("坐标提取参数")
+        lo = QVBoxLayout(g)
+        for a, b in [("左上角 X:", "sp_x1"), ("左上角 Y:", "sp_y1"),
+                      ("右下角 X:", "sp_x2"), ("右下角 Y:", "sp_y2")]:
+            r = QHBoxLayout()
+            r.addWidget(QLabel(a))
+            sp = QSpinBox()
+            sp.setRange(0, 9999)
+            setattr(self, b, sp)
+            r.addWidget(sp)
+            lo.addLayout(r)
+        btn = QPushButton("选择PDF预览并框选")
+        btn.clicked.connect(self._preview_coord)
+        lo.addWidget(btn)
+        return g
 
-        layout.addLayout(grid)
+    def _mk_anchor(self):
+        g = QGroupBox("关键词匹配参数")
+        lo = QVBoxLayout(g)
+        r1 = QHBoxLayout()
+        r1.addWidget(QLabel("关键词:"))
+        self.kw_text = QLineEdit()
+        self.kw_text.setPlaceholderText("如：编号")
+        r1.addWidget(self.kw_text)
+        lo.addLayout(r1)
+        r2 = QHBoxLayout()
+        r2.addWidget(QLabel("方向:"))
+        self.kw_dir = QComboBox()
+        self.kw_dir.addItems(["右侧", "下方", "左侧", "上方"])
+        r2.addWidget(self.kw_dir)
+        r2.addWidget(QLabel("范围:"))
+        self.kw_range = QSpinBox()
+        self.kw_range.setRange(50, 500)
+        self.kw_range.setValue(200)
+        r2.addWidget(self.kw_range)
+        r2.addStretch()
+        lo.addLayout(r2)
+        btn = QPushButton("测试关键词（预览高亮）")
+        btn.clicked.connect(self._preview_kw)
+        lo.addWidget(btn)
+        return g
 
-        self.btn_pick_coord = QPushButton("选择PDF预览并框选")
-        self.btn_pick_coord.clicked.connect(self._open_preview_coordinate)
-        layout.addWidget(self.btn_pick_coord)
-        layout.addStretch()
-        return grp
+    def _mk_tbl(self):
+        g = QGroupBox("表格列提取参数")
+        lo = QVBoxLayout(g)
+        r1 = QHBoxLayout()
+        r1.addWidget(QLabel("表头关键词:"))
+        self.tc_hdr = QLineEdit()
+        self.tc_hdr.setPlaceholderText("如：更改对象编号")
+        r1.addWidget(self.tc_hdr)
+        lo.addLayout(r1)
+        r2 = QHBoxLayout()
+        r2.addWidget(QLabel("行号:"))
+        self.tc_row = QSpinBox()
+        self.tc_row.setRange(2, 999)
+        self.tc_row.setValue(2)
+        r2.addWidget(self.tc_row)
+        r2.addStretch()
+        lo.addLayout(r2)
+        btn = QPushButton("测试定位（预览高亮表头）")
+        btn.clicked.connect(self._preview_tc)
+        lo.addWidget(btn)
+        return g
 
-    def _build_anchor_panel(self) -> QGroupBox:
-        """关键词匹配参数面板。"""
-        grp = QGroupBox("关键词匹配参数")
-        layout = QVBoxLayout(grp)
+    def _toggle_fs(self):
+        if self._fullscreen:
+            self.showNormal()
+            self.btn_fs.setText("全屏")
+        else:
+            self.showMaximized()
+            self.btn_fs.setText("还原")
+        self._fullscreen = not self._fullscreen
 
-        row1 = QHBoxLayout()
-        row1.addWidget(QLabel("关键词:"))
-        self.kw_keyword = QLineEdit(); self.kw_keyword.setPlaceholderText("如：编号"); row1.addWidget(self.kw_keyword)
-        layout.addLayout(row1)
+    # ═══════════════ Recent configs ═══════════════
 
-        row2 = QHBoxLayout()
-        row2.addWidget(QLabel("方向:"))
-        self.kw_direction = QComboBox()
-        self.kw_direction.addItems(["右侧", "下方", "左侧", "上方"])
-        row2.addWidget(self.kw_direction)
-        row2.addWidget(QLabel("范围(像素):"))
-        self.kw_range = QSpinBox(); self.kw_range.setRange(50, 500); self.kw_range.setValue(200)
-        row2.addWidget(self.kw_range)
-        row2.addStretch()
-        layout.addLayout(row2)
-
-        self.btn_test_kw = QPushButton("测试关键词（预览高亮）")
-        self.btn_test_kw.clicked.connect(self._open_preview_keyword)
-        layout.addWidget(self.btn_test_kw)
-        layout.addStretch()
-        return grp
-
-    def _build_table_column_panel(self) -> QGroupBox:
-        """表格列提取参数面板（简化版：表头关键词 + 行号）。"""
-        grp = QGroupBox("表格列提取参数")
-        layout = QVBoxLayout(grp)
-
-        row1 = QHBoxLayout()
-        row1.addWidget(QLabel("表头关键词:"))
-        self.tc_column_header = QLineEdit()
-        self.tc_column_header.setPlaceholderText("如：更改对象编号")
-        row1.addWidget(self.tc_column_header)
-        layout.addLayout(row1)
-
-        row2 = QHBoxLayout()
-        row2.addWidget(QLabel("行号:"))
-        self.tc_row_number = QSpinBox()
-        self.tc_row_number.setRange(2, 999)
-        self.tc_row_number.setValue(2)
-        self.tc_row_number.setToolTip("1=表头行，2=第一条数据行")
-        row2.addWidget(self.tc_row_number)
-        row2.addStretch()
-        layout.addLayout(row2)
-
-        self.btn_test_tc = QPushButton("测试定位（预览高亮表头）")
-        self.btn_test_tc.clicked.connect(self._open_preview_table_column)
-        layout.addWidget(self.btn_test_tc)
-        layout.addStretch()
-        return grp
-
-    # ── 规则列表操作 ─────────────────────────────────────
+    # ═══════════════ Rule table ═══════════════
 
     def _refresh_table(self):
-        self.rule_table.blockSignals(True)
         self.rule_table.setRowCount(len(self.rules))
         for i, rule in enumerate(self.rules):
-            mode_text = {"coordinate": "坐标提取", "anchor": "锚点提取", "table_column": "表格列提取"}.get(
-                rule.get("mode", "coordinate"), "坐标提取")
+            mode_map = {"coordinate": "坐标提取", "anchor": "锚点提取", "table_column": "表格列提取"}
             self.rule_table.setItem(i, 0, QTableWidgetItem(rule.get("name", "")))
-            mode_combo = QComboBox()
-            mode_combo.addItems(["坐标提取", "锚点提取", "表格列提取"])
-            mode_idx = {"coordinate": 0, "anchor": 1, "table_column": 2}.get(rule.get("mode", "coordinate"), 0)
-            mode_combo.setCurrentIndex(mode_idx)
-            mode_combo.currentIndexChanged.connect(lambda idx, r=i: self._on_mode_changed(r, idx))
-            self.rule_table.setCellWidget(i, 1, mode_combo)
+            mc = QComboBox()
+            mc.addItems(["坐标提取", "锚点提取", "表格列提取"])
+            mi = {"coordinate": 0, "anchor": 1, "table_column": 2}.get(rule.get("mode", "coordinate"), 0)
+            mc.setCurrentIndex(mi)
+            mc.currentIndexChanged.connect(lambda idx, r=i: self._mode_changed(r, idx))
+            self.rule_table.setCellWidget(i, 1, mc)
             self.rule_table.setItem(i, 2, QTableWidgetItem(rule.get("page_range", "第1页")))
-            dtype_combo = QComboBox()
-            dtype_combo.addItems(list(DATA_TYPES))
-            dtype_combo.setCurrentText(rule.get("data_type", "文本"))
-            self.rule_table.setCellWidget(i, 3, dtype_combo)
-        self.rule_table.blockSignals(False)
+            dc = QComboBox()
+            dc.addItems(list(DATA_TYPES))
+            dc.setCurrentText(rule.get("data_type", "文本"))
+            self.rule_table.setCellWidget(i, 3, dc)
 
-    def _on_row_changed(self, row: int, col: int, prev_row: int, prev_col: int):
+    def _on_row(self, row, col, prev_row, prev_col):
         if row < 0 or row >= len(self.rules):
             return
+        self._save_params()
         self._show_params(row)
 
-    def _on_mode_changed(self, row: int, idx: int):
+    def _mode_changed(self, row, idx):
         mode = ["coordinate", "anchor", "table_column"][idx]
         self.rules[row]["mode"] = mode
-        # 为新模式补充默认字段
-        if mode == "coordinate":
-            self.rules[row].setdefault("x1", 0)
-            self.rules[row].setdefault("y1", 0)
-            self.rules[row].setdefault("x2", 0)
-            self.rules[row].setdefault("y2", 0)
-        elif mode == "anchor":
-            self.rules[row].setdefault("anchor_text", "")
-            self.rules[row].setdefault("direction", "right")
-            self.rules[row].setdefault("range", 200)
-        elif mode == "table_column":
-            self.rules[row].setdefault("column_header", "")
-            self.rules[row].setdefault("row_number", 2)
+        for k, v in {
+            "x1": 0, "y1": 0, "x2": 0, "y2": 0,
+            "anchor_text": "", "direction": "right", "range": 200,
+            "column_header": "", "row_number": 2,
+        }.items():
+            self.rules[row].setdefault(k, v)
         self._show_params(row)
+        self._update_preview()
 
-    def _show_params(self, row: int):
-        """根据选中行的模式显示对应参数面板。"""
+    def _show_params(self, row):
         rule = self.rules[row]
         mode = rule.get("mode", "coordinate")
-
-        self.grp_coordinate.setVisible(mode == "coordinate")
+        self.grp_coord.setVisible(mode == "coordinate")
         self.grp_anchor.setVisible(mode == "anchor")
-        self.grp_table.setVisible(mode == "table_column")
+        self.grp_tbl.setVisible(mode == "table_column")
+        self.lbl_mode.setText(f"模式: {mode}")
+
+        self.edt_rname.setText(rule.get("name", ""))
+        self.edt_page.setText(rule.get("page_range", "第1页"))
+        self.cmb_dtype.setCurrentText(rule.get("data_type", "文本"))
 
         if mode == "coordinate":
-            self.ctx_x1.setValue(int(rule.get("x1", 0)))
-            self.ctx_y1.setValue(int(rule.get("y1", 0)))
-            self.ctx_x2.setValue(int(rule.get("x2", 0)))
-            self.ctx_y2.setValue(int(rule.get("y2", 0)))
+            self.sp_x1.setValue(int(rule.get("x1", 0)))
+            self.sp_y1.setValue(int(rule.get("y1", 0)))
+            self.sp_x2.setValue(int(rule.get("x2", 0)))
+            self.sp_y2.setValue(int(rule.get("y2", 0)))
         elif mode == "anchor":
-            self.kw_keyword.setText(rule.get("anchor_text", ""))
-            dir_idx = {"right": 0, "below": 1, "left": 2, "above": 3}.get(
-                rule.get("direction", "right"), 0)
-            self.kw_direction.setCurrentIndex(dir_idx)
+            self.kw_text.setText(rule.get("anchor_text", ""))
+            di = {"right": 0, "below": 1, "left": 2, "above": 3}.get(rule.get("direction", "right"), 0)
+            self.kw_dir.setCurrentIndex(di)
             self.kw_range.setValue(int(rule.get("range", 200)))
         elif mode == "table_column":
-            self.tc_column_header.setText(rule.get("column_header", ""))
-            self.tc_row_number.setValue(int(rule.get("row_number", 2)))
+            self.tc_hdr.setText(rule.get("column_header", ""))
+            self.tc_row.setValue(int(rule.get("row_number", 2)))
+        self._update_preview()
+
+    def _update_preview(self):
+        row = self.rule_table.currentRow()
+        if row < 0 or row >= len(self.rules):
+            self._pw.set_hl(None)
+            return
+        rule = self.rules[row]
+        mode = rule.get("mode", "coordinate")
+        color = _HL.get(mode, _HL["coordinate"])
+        if mode == "coordinate":
+            bbox = (int(rule.get("x1", 0)), int(rule.get("y1", 0)),
+                    int(rule.get("x2", 0)), int(rule.get("y2", 0)))
+            if bbox[2] > bbox[0] and bbox[3] > bbox[1]:
+                self._pw.set_hl(bbox, color, rule.get("name", ""))
+            else:
+                self._pw.set_hl(None)
+        else:
+            self._pw.set_hl(None)
+        import re
+        nums = re.findall(r'\d+', str(rule.get("page_range", "第1页")))
+        if nums:
+            self._pw.go_page(int(nums[0]))
+
+    def _on_param(self):
+        self._save_params()
+        self._update_preview()
 
     def _add_rule(self):
-        rule = {"name": "新字段", "mode": "coordinate", "page_range": "第1页",
-                "x1": 0, "y1": 0, "x2": 0, "y2": 0, "data_type": "文本"}
-        self.rules.append(rule)
+        self.rules.append({
+            "name": "新字段", "mode": "coordinate", "page_range": "第1页",
+            "x1": 0, "y1": 0, "x2": 0, "y2": 0, "data_type": "文本",
+        })
         self._refresh_table()
         self.rule_table.selectRow(len(self.rules) - 1)
 
-    def _delete_rule(self):
-        rows = sorted({idx.row() for idx in self.rule_table.selectedIndexes()}, reverse=True)
+    def _del_rules(self):
+        rows = sorted({i.row() for i in self.rule_table.selectedIndexes()}, reverse=True)
         if not rows:
-            QMessageBox.information(self, "提示", "请先选择要删除的规则")
+            QMessageBox.information(self, "提示", "请先选择要删除的规则行")
             return
-        for row in rows:
-            self.rules.pop(row)
+        for r in rows:
+            if r < len(self.rules):
+                self.rules.pop(r)
         self._refresh_table()
+        self._pw.set_hl(None)
 
-    def _move_rule(self, direction: int):
-        row = self.rule_table.currentRow()
-        if row < 0:
-            return
-        new_row = row + direction
-        if new_row < 0 or new_row >= len(self.rules):
-            return
-        self.rules.insert(new_row, self.rules.pop(row))
-        self._refresh_table()
-        self.rule_table.selectRow(new_row)
-
-    # ── 从面板回写当前规则 ────────────────────────────────
-
-    def _save_current_params(self):
-        """将参数面板的当前值写回选中的规则。"""
+    def _save_params(self):
         row = self.rule_table.currentRow()
         if row < 0 or row >= len(self.rules):
             return
         rule = self.rules[row]
         mode = rule.get("mode", "coordinate")
+        rule["name"] = self.edt_rname.text().strip() or rule.get("name", "")
+        rule["page_range"] = self.edt_page.text() or "第1页"
+        rule["data_type"] = self.cmb_dtype.currentText()
+        # Sync to table
+        if self.rule_table.item(row, 0):
+            self.rule_table.item(row, 0).setText(rule["name"])
+        if self.rule_table.item(row, 2):
+            self.rule_table.item(row, 2).setText(rule["page_range"])
 
-        # 保存列表中的通用字段
-        name_item = self.rule_table.item(row, 0)
-        if name_item:
-            rule["name"] = name_item.text()
-        page_item = self.rule_table.item(row, 2)
-        if page_item:
-            rule["page_range"] = page_item.text()
-        dtype_combo = self.rule_table.cellWidget(row, 3)
-        if dtype_combo:
-            rule["data_type"] = dtype_combo.currentText()
-
-        # 保存模式特定字段
         if mode == "coordinate":
-            rule["x1"] = self.ctx_x1.value()
-            rule["y1"] = self.ctx_y1.value()
-            rule["x2"] = self.ctx_x2.value()
-            rule["y2"] = self.ctx_y2.value()
+            rule["x1"] = self.sp_x1.value()
+            rule["y1"] = self.sp_y1.value()
+            rule["x2"] = self.sp_x2.value()
+            rule["y2"] = self.sp_y2.value()
         elif mode == "anchor":
-            rule["anchor_text"] = self.kw_keyword.text()
-            rule["direction"] = ["right", "below", "left", "above"][self.kw_direction.currentIndex()]
+            rule["anchor_text"] = self.kw_text.text()
+            rule["direction"] = ["right", "below", "left", "above"][self.kw_dir.currentIndex()]
             rule["range"] = self.kw_range.value()
         elif mode == "table_column":
-            rule["column_header"] = self.tc_column_header.text()
-            rule["row_number"] = self.tc_row_number.value()
+            rule["column_header"] = self.tc_hdr.text()
+            rule["row_number"] = self.tc_row.value()
 
-    # ── PDF 预览集成 ──────────────────────────────────────
+    # ═══════════════ Load / Save ═══════════════
 
-    def _open_preview_coordinate(self):
-        """坐标模式：打开预览框选。"""
-        self._save_current_params()
+    def _load_cfg(self):
+        path, _ = QFileDialog.getOpenFileName(self, "加载配置", "", "配置文件 (*.cfg)")
+        if not path:
+            return
+        loaded = ConfigManager.load(path)
+        if loaded:
+            self.config = loaded
+            self.config_path = path
+            self.rules = list(self.config.get("rules", []))
+            if not self.rules and "regions" in self.config:
+                for r in self.config["regions"]:
+                    self.rules.append({
+                        "name": r.get("name", ""), "mode": "coordinate",
+                        "page_range": r.get("page_range", "第1页"),
+                        "x1": r.get("x1", 0), "y1": r.get("y1", 0),
+                        "x2": r.get("x2", 0), "y2": r.get("y2", 0),
+                        "data_type": r.get("data_type", "文本"),
+                    })
+            self.edt_name.setText(self.config.get("rule_name", "默认规则"))
+            self._refresh_table()
+            ConfigManager.add_recent_config(path)
+            if self.rules:
+                self.rule_table.selectRow(0)
+            QMessageBox.information(self, "成功", "配置已加载")
+
+    def _save(self):
+        self._save_params()
+        cfg = {"rule_name": self.edt_name.text(), "rules": self.rules}
+        if not self.config_path:
+            return self._save_as()
+        if ConfigManager.save(cfg, self.config_path):
+            self.config = cfg
+            QMessageBox.information(self, "成功", "配置已保存")
+            ConfigManager.add_recent_config(self.config_path)
+            self.accept()
+        else:
+            QMessageBox.critical(self, "错误", "保存配置失败")
+
+    def _save_as(self):
+        self._save_params()
+        path, _ = QFileDialog.getSaveFileName(self, "保存配置", "", "配置文件 (*.cfg)")
+        if not path:
+            return
+        if not path.endswith(".cfg"):
+            path += ".cfg"
+        cfg = {"rule_name": self.edt_name.text(), "rules": self.rules}
+        if ConfigManager.save(cfg, path):
+            self.config = cfg
+            self.config_path = path
+            QMessageBox.information(self, "成功", "配置已保存")
+            ConfigManager.add_recent_config(path)
+            self.accept()
+        else:
+            QMessageBox.critical(self, "错误", "保存配置失败")
+
+    def _close(self):
+        row = self.rule_table.currentRow()
+        if row >= 0:
+            ConfigDialog._last_row = row
+        self._pw.close_doc()
+        self.reject()
+
+    def get_config(self):
+        self._save_params()
+        return {"rule_name": self.edt_name.text(), "rules": self.rules}
+
+    def get_config_path(self):
+        return self.config_path
+
+    # ═══════════════ PDF preview dialogs ═══════════════
+
+    def _preview_coord(self):
+        self._save_params()
         row = self.rule_table.currentRow()
         if row < 0:
-            QMessageBox.warning(self, "提示", "请先选择目标规则")
-            return
+            return QMessageBox.warning(self, "提示", "请先选择目标规则")
         path, _ = QFileDialog.getOpenFileName(self, "选择 PDF 预览文件", "", "PDF 文件 (*.pdf)")
         if not path:
             return
         self._preview_dlg = PdfPreviewDialog(path, self)
         self._preview_dlg.set_mode("coordinate")
 
-        def on_confirm(x1, y1, x2, y2, page):
-            self.ctx_x1.setValue(x1); self.ctx_y1.setValue(y1)
-            self.ctx_x2.setValue(x2); self.ctx_y2.setValue(y2)
-            self._save_current_params()
-            page_str = f"第{page}页"
-            page_item = self.rule_table.item(row, 2)
-            if page_item:
-                page_item.setText(page_str)
+        def cb(x1, y1, x2, y2, page):
+            self.sp_x1.setValue(x1)
+            self.sp_y1.setValue(y1)
+            self.sp_x2.setValue(x2)
+            self.sp_y2.setValue(y2)
+            self._save_params()
+            ps = f"第{page}页"
+            if self.rule_table.item(row, 2):
+                self.rule_table.item(row, 2).setText(ps)
+            self.edt_page.setText(ps)
+            self._update_preview()
 
-        self._preview_dlg.coordinates_confirmed.connect(on_confirm)
-        self._preview_dlg.finished.connect(self._on_preview_closed)
+        self._preview_dlg.coordinates_confirmed.connect(cb)
+        self._preview_dlg.finished.connect(self._on_pv_closed)
         self._preview_dlg.show()
 
-    def _open_preview_keyword(self):
-        """锚点模式：打开预览并高亮所有锚点关键词。"""
-        self._save_current_params()
+    def _preview_kw(self):
+        self._save_params()
         path, _ = QFileDialog.getOpenFileName(self, "选择 PDF 测试文件", "", "PDF 文件 (*.pdf)")
         if not path:
             return
-        keywords = []
-        for rule in self.rules:
-            if rule.get("mode") == "anchor" and rule.get("anchor_text"):
-                keywords.append(rule["anchor_text"])
+        kws = [r["anchor_text"] for r in self.rules if r.get("mode") == "anchor" and r.get("anchor_text")]
         self._preview_dlg = PdfPreviewDialog(path, self)
         self._preview_dlg.set_mode("anchor")
-        self._preview_dlg.set_keywords(keywords)
-        self._preview_dlg.finished.connect(self._on_preview_closed)
+        self._preview_dlg.set_keywords(kws)
+        self._preview_dlg.finished.connect(self._on_pv_closed)
         self._preview_dlg.show()
 
-    def _open_preview_table_column(self):
-        """表格列模式：打开预览并高亮表头关键词。"""
-        self._save_current_params()
+    def _preview_tc(self):
+        self._save_params()
         row = self.rule_table.currentRow()
         if row < 0:
-            QMessageBox.warning(self, "提示", "请先选择目标规则")
-            return
-        rule = self.rules[row]
+            return QMessageBox.warning(self, "提示", "请先选择目标规则")
         path, _ = QFileDialog.getOpenFileName(self, "选择 PDF 预览文件", "", "PDF 文件 (*.pdf)")
         if not path:
             return
-        keywords = [rule.get("column_header", "")]
+        kws = [self.rules[row].get("column_header", "")]
         self._preview_dlg = PdfPreviewDialog(path, self)
         self._preview_dlg.set_mode("table_column")
-        self._preview_dlg.set_keywords(keywords)
-        self._preview_dlg.finished.connect(self._on_preview_closed)
+        self._preview_dlg.set_keywords(kws)
+        self._preview_dlg.finished.connect(self._on_pv_closed)
         self._preview_dlg.show()
 
-    def _auto_detect_columns(self, pdf_path: str, region: list, page_num: int):
-        """框选表格区域后自动识别列名并填充映射子表。"""
-        try:
-            import pdfplumber
-            with pdfplumber.open(pdf_path) as pdf:
-                page = pdf.pages[page_num - 1] if page_num <= len(pdf.pages) else pdf.pages[0]
-                x1, y1, x2, y2 = region
-                from pdf_extractor import PdfExtractor
-                bbox = PdfExtractor._bl_bbox_to_plumber(
-                    x1, y1, x2, y2, page.width, page.height)
-                cropped = page.within_bbox(bbox)
-
-                # 尝试 lines 策略（适合有边框表格）
-                tables = cropped.extract_tables({
-                    "vertical_strategy": "lines",
-                    "horizontal_strategy": "lines",
-                })
-                if not tables:
-                    # 回退到 text 策略（适合隐式表格）
-                    tables = cropped.extract_tables({
-                        "vertical_strategy": "text",
-                        "horizontal_strategy": "text",
-                    })
-
-                if tables and tables[0]:
-                    import re
-                    headers = [re.sub(r"\s+", "", str(h or "")) for h in tables[0][0]]
-                    # 过滤空表头
-                    headers = [h for h in headers if h]
-                    self.col_map_table.setRowCount(len(headers))
-                    for i, h in enumerate(headers):
-                        self.col_map_table.setItem(i, 0, QTableWidgetItem(h))
-                        self.col_map_table.setItem(i, 1, QTableWidgetItem(h))
-                    self.lbl_table_region.setText(
-                        f"表格区域: ({x1}, {y1}) - ({x2}, {y2})  [已识别 {len(headers)} 列]")
-                else:
-                    QMessageBox.information(self, "提示",
-                        "未能在表格区域中识别到列名，请调整框选范围或表格检测参数后重试")
-        except Exception as e:
-            logger.exception("自动识别列名失败")
-            QMessageBox.warning(self, "错误", f"自动识别列名失败：{e}")
-
-    def _on_preview_closed(self):
+    def _on_pv_closed(self):
         self._preview_dlg = None
-
-    # ── 保存 / 加载 ────────────────────────────────────────
-
-    def _save(self):
-        self._save_current_params()
-        config = {"rule_name": self.edit_rule_name.text(), "rules": self.rules}
-        if not self.config_path:
-            self._save_as()
-            return
-        if ConfigManager.save(config, self.config_path):
-            self.config = config
-            QMessageBox.information(self, "成功", "配置已保存")
-            self.accept()
-        else:
-            QMessageBox.critical(self, "错误", "保存配置失败")
-
-    def _save_as(self):
-        self._save_current_params()
-        path, _ = QFileDialog.getSaveFileName(self, "保存配置", "", "配置文件 (*.cfg)")
-        if not path:
-            return
-        if not path.endswith(".cfg"):
-            path += ".cfg"
-        config = {"rule_name": self.edit_rule_name.text(), "rules": self.rules}
-        if ConfigManager.save(config, path):
-            self.config = config
-            self.config_path = path
-            QMessageBox.information(self, "成功", "配置已保存")
-            self.accept()
-        else:
-            QMessageBox.critical(self, "错误", "保存配置失败")
-
-    def get_config(self) -> dict:
-        self._save_current_params()
-        return {"rule_name": self.edit_rule_name.text(), "rules": self.rules}
-
-    def get_config_path(self) -> str:
-        return self.config_path
