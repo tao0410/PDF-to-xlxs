@@ -14,8 +14,8 @@ class ExcelOptionDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("生成 Excel 文件")
-        self.resize(520, 310)
-        self.setMinimumSize(420, 260)
+        self.resize(520, 380)
+        self.setMinimumSize(420, 320)
         self._tpl = None
         self._use = False
         self._cards = []

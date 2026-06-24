@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF信息提取工具 — UI Demo v2.2</title>
+<style>
+/* ============================================================
+   Design Tokens (from UI设计.md — PyQt5-mappable)
+   ============================================================ */
+:root {
+  --primary: #15803D;
+  --primary-hover: #16A34A;
+  --primary-pressed: #166534;
+  --primary-light: #DCFCE7;
+  --primary-lighter: #F0FDF4;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #DC2626;
+  --info: #64748B;
+  --bg-page: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --bg-sidebar: #F9FAFB;
+  --bg-hover: #F8FAFC;
+  --text-primary: #0F172A;
+  --text-body: #334155;
+  --text-secondary: #64748B;
+  --text-placeholder: #94A3B8;
+  --border-default: #E2E8F0;
+  --border-light: #F1F5F9;
+  --sz-input: 36px;
+  --sz-progress: 8px;
+  --sz-titlebar: 52px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+}
+
+/* ============================================================
+   Reset & Base
+   ============================================================ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Microsoft YaHei", "微软雅黑", "Segoe UI", sans-serif;
+  font-size: 14px; color: var(--text-body); line-height: 22px;
+  background: var(--bg-page);
+}
+
+/* ============================================================
+   Top Nav
+   ============================================================ */
+.page-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: var(--sz-titlebar); padding: 0 32px;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-light);
+  display: flex; align-items: center; gap: 4px;
+}
+.page-nav a {
+  padding: 14px 16px; font-size: 13px; font-weight: 500;
+  color: var(--text-secondary); text-decoration: none;
+  border-bottom: 2px solid transparent; transition: all 0.15s;
+}
+.page-nav a.active, .page-nav a:hover { color: var(--primary); }
+.page-nav a.active { border-bottom-color: var(--primary); font-weight: 600; }
+.page-nav .brand {
+  font-weight: 700; color: var(--primary); margin-right: 20px; font-size: 14px;
+}
+
+/* ============================================================
+   Page sections
+   ============================================================ */
+.page { display: none; padding: 84px 48px 48px; max-width: 1200px; margin: 0 auto; }
+.page:target { display: block; }
+.page:first-of-type { display: block; } /* default: page 1 */
+#page1 { display: block; }
+#page2, #page3, #page4 { display: none; }
+#page2:target, #page3:target, #page4:target { display: block; }
+#page1:target ~ #page2, #page1:target ~ #page3, #page1:target ~ #page4 { display: none; }
+#page2:target ~ #page1, #page3:target ~ #page1, #page4:target ~ #page1 { display: none; }
+
+.section-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 1px;
+  color: var(--primary); text-transform: uppercase; margin-bottom: 8px;
+}
+.page h1 { font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 32px; }
+
+/* ============================================================
+   Window Frame
+   ============================================================ */
+.window-frame {
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default); overflow: hidden; max-width: 1000px;
+}
+.window-titlebar {
+  height: var(--sz-titlebar); padding: 0 20px; display: flex;
+  align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border-light); background: #fff;
+}
+.window-titlebar h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.window-dots { display: flex; gap: 8px; }
+.window-dots span { width: 12px; height: 12px; border-radius: 50%; background: var(--border-default); }
+.window-body { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
+
+/* ============================================================
+   Cards
+   ============================================================ */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border-default);
+  border-radius: var(--radius-md); padding: 24px;
+}
+
+/* ============================================================
+   Buttons (PyQt5-mappable: objectName selectors)
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 20px; border-radius: var(--radius-sm); font-size: 14px;
+  font-weight: 600; cursor: pointer; border: 1px solid transparent;
+  font-family: inherit; line-height: 1.4;
+}
+.btn-primary { background: var(--primary); color: #fff; border: none; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-primary:disabled { background: #86EFAC; cursor: default; }
+.btn-secondary { background: #fff; color: var(--text-body); border: 1px solid var(--border-default); }
+.btn-secondary:hover { background: var(--bg-hover); border-color: #CBD5E1; }
+.btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid transparent; }
+.btn-ghost:hover { background: var(--bg-hover); }
+.btn-danger { background: var(--danger); color: #fff; border: none; }
+.btn-danger:hover { background: #EF4444; }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+
+/* ============================================================
+   Table (PyQt5 QTableWidget mapping)
+   ============================================================ */
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl thead th {
+  background: var(--bg-page); padding: 10px 16px; text-align: left;
+  font-size: 13px; font-weight: 700; color: var(--text-primary);
+  border-bottom: 1px solid var(--border-default);
+}
+.tbl tbody td {
+  padding: 10px 16px; font-size: 14px;
+  border-bottom: 1px solid var(--border-light); color: var(--text-body);
+}
+.tbl tbody tr.selected { background: var(--primary-light); }
+.tbl tbody tr:hover { background: var(--bg-hover); }
+.tbl-wrapper {
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* ============================================================
+   Inputs (PyQt5 QLineEdit/QComboBox mapping)
+   ============================================================ */
+.input {
+  height: var(--sz-input); padding: 0 14px; border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm); font-size: 14px; outline: none; width: 100%;
+  color: var(--text-body); background: #fff; font-family: inherit;
+}
+.input:focus { border-color: var(--primary); }
+.input::placeholder { color: var(--text-placeholder); }
+select.input { appearance: auto; cursor: pointer; }
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: 13px; font-weight: 500; color: var(--text-body); margin-bottom: 6px; }
+.form-row { display: flex; gap: 12px; }
+.form-row > * { flex: 1; }
+
+/* ============================================================
+   Tags (PyQt5 QLabel capsule)
+   ============================================================ */
+.tag {
+  display: inline-block; padding: 3px 12px; border-radius: var(--radius-full);
+  font-size: 12px; font-weight: 500; white-space: nowrap;
+}
+.tag-success { background: var(--primary-light); color: var(--primary); }
+.tag-warning { background: #FEF3C7; color: #D97706; }
+.tag-info { background: var(--primary-lighter); color: var(--primary-hover); }
+.tag-danger { background: #FEE2E2; color: var(--danger); }
+.tag-muted { background: #F1F5F9; color: var(--text-secondary); }
+
+/* ============================================================
+   Banners (PyQt5 QLabel with objectName)
+   ============================================================ */
+.banner {
+  border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px;
+  display: flex; align-items: center; gap: 8px;
+}
+.banner-warn { background: #FEF3C7; color: #92400E; }
+.banner-success { background: var(--primary-lighter); color: var(--primary-pressed); }
+.banner-danger { background: #FEE2E2; color: #991B1B; }
+
+/* ============================================================
+   Progress Bar (PyQt5 QProgressBar mapping)
+   ============================================================ */
+.progress { height: var(--sz-progress); background: var(--border-light); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.3s; }
+.progress-fill.danger { background: var(--danger); }
+
+/* ============================================================
+   Stat Cards (PyQt5 QFrame#stat-card mapping)
+   ============================================================ */
+.stat-cards { display: flex; gap: 16px; }
+.stat-card {
+  flex: 1; text-align: center; padding: 16px 20px; border-radius: var(--radius-md);
+  background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
+  /* PyQt5 note: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #F8FAFC, stop:1 #F1F5F9) */
+}
+.stat-num { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+/* ============================================================
+   Dialog overlay
+   ============================================================ */
+.dialog-overlay {
+  background: rgba(15,23,42,0.4); border-radius: var(--radius-lg);
+  padding: 24px; display: flex; align-items: center; justify-content: center; min-height: 300px;
+}
+.dialog {
+  background: #fff; border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg); width: 100%; max-width: 520px;
+  padding: 24px 28px;
+}
+.dialog-wide { max-width: 580px; }
+.dialog-narrow { max-width: 440px; }
+.dialog-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+
+/* ============================================================
+   Radio Cards (PyQt5 QFrame#radio-card mapping)
+   ============================================================ */
+.radio-cards { display: flex; flex-direction: column; gap: 12px; }
+.radio-card {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 16px; border: 1px solid var(--border-default); border-radius: 8px;
+  cursor: pointer; transition: all 0.15s;
+}
+.radio-card:hover, .radio-card.selected { border-color: var(--primary); background: var(--primary-lighter); }
+.radio-dot {
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border-default);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 2px;
+}
+.radio-card.selected .radio-dot { border-color: var(--primary); }
+.radio-card.selected .radio-dot::after {
+  content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--primary);
+}
+.radio-text { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.radio-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+/* ============================================================
+   Three-Column Layout (Config window)
+   ============================================================ */
+.three-col { display: flex; gap: 12px; min-height: 420px; }
+.col-left {
+  width: 380px; flex-shrink: 0; background: var(--bg-card);
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+  padding: 16px; display: flex; flex-direction: column;
+}
+.col-center {
+  width: 320px; flex-shrink: 0; background: var(--bg-card);
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+  padding: 20px;
+}
+.col-right {
+  flex: 1; background: var(--bg-card);
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+  padding: 16px; display: flex; flex-direction: column;
+}
+
+/* ============================================================
+   Utility
+   ============================================================ */
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.gap-8 { gap: 8px; } .gap-12 { gap: 12px; } .gap-16 { gap: 16px; } .gap-24 { gap: 24px; }
+.mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; } .mt-20 { margin-top: 20px; }
+.mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+.text-sm { font-size: 12px; }
+.text-secondary { color: var(--text-secondary); }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+/* ============================================================
+   Config bottom bar
+   ============================================================ */
+.config-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 16px; margin-top: 12px; border-top: 1px solid var(--border-light);
+}
+
+/* ============================================================
+   Empty state
+   ============================================================ */
+.empty-state {
+  border: 2px dashed var(--border-default); border-radius: 8px;
+  padding: 48px 24px; text-align: center; color: var(--text-placeholder);
+}
+.empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+
+/* ============================================================
+   Preview placeholder
+   ============================================================ */
+.preview-area {
+  flex: 1; background: var(--bg-page); border: 2px dashed var(--border-default);
+  border-radius: 8px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; min-height: 280px;
+  color: var(--text-placeholder); font-size: 13px;
+}
+.preview-area .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+.preview-nav { display: flex; justify-content: center; gap: 8px; margin-top: 12px; }
+
+/* ============================================================
+   Design Token reference (page 4)
+   ============================================================ */
+.token-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.token-swatch { height: 48px; border-radius: var(--radius-sm); border: 1px solid var(--border-default); }
+.token-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+.token-value { font-size: 11px; font-weight: 600; color: var(--text-primary); }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- TOP NAV -->
+<!-- ============================================================ -->
+<nav class="page-nav">
+  <span class="brand">PDF工具 v2.2</span>
+  <a href="#page1">主页面 + 状态</a>
+  <a href="#page2">配置窗口</a>
+  <a href="#page3">弹窗系列</a>
+  <a href="#page4">设计 Token</a>
+</nav>
+
+<!-- ============================================================ -->
+<!-- PAGE 1: MAIN + STATES -->
+<!-- ============================================================ -->
+<section class="page" id="page1">
+  <div class="section-label">Page 01</div>
+  <h1>主页面 + 状态变体</h1>
+
+  <!-- NORMAL STATE -->
+  <div class="window-frame mb-16">
+    <div class="window-titlebar">
+      <h3>PDF信息提取工具</h3>
+      <div class="window-dots"><span></span><span></span><span></span></div>
+    </div>
+    <div class="window-body">
+
+      <!-- Card 1: File List -->
+      <div class="card">
+        <div class="flex-between mb-12">
+          <span style="font-weight:600;font-size:16px;color:var(--text-primary)">已选择文件</span>
+          <span class="text-sm text-secondary">共 3 个，已处理 1 个，待处理 2 个</span>
+        </div>
+        <div class="tbl-wrapper">
+          <table class="tbl">
+            <thead><tr>
+              <th style="width:40px">#</th>
+              <th>文件名</th>
+              <th style="width:80px">大小</th>
+              <th style="width:90px">状态</th>
+              <th style="width:70px">耗时</th>
+            </tr></thead>
+            <tbody>
+              <tr class="selected">
+                <td>1</td><td>报告202401.pdf</td><td>1.2 MB</td>
+                <td><span class="tag tag-success">已确认</span></td><td>1.2s</td>
+              </tr>
+              <tr>
+                <td>2</td><td>报告202402.pdf</td><td>2.5 MB</td>
+                <td><span class="tag tag-warning">待处理</span></td><td>-</td>
+              </tr>
+              <tr class="selected">
+                <td>3</td><td>报告202403.pdf</td><td>0.8 MB</td>
+                <td><span class="tag tag-warning">待处理</span></td><td>-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="flex-between mt-12">
+          <span class="text-sm text-secondary">已选中 2 项（Shift 连选 / Ctrl 跳选）</span>
+          <div class="flex gap-8">
+            <button class="btn btn-secondary btn-sm">打开</button>
+            <button class="btn btn-secondary btn-sm">移除选中</button>
+            <button class="btn btn-ghost btn-sm">清空</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Processing -->
+      <div class="card">
+        <div class="flex-between mb-12">
+          <button class="btn btn-primary">开始处理</button>
+          <button class="btn btn-ghost">取消</button>
+        </div>
+        <div class="progress"><div class="progress-fill" style="width:66%"></div></div>
+        <div class="flex-between mt-8">
+          <span class="text-sm">正在处理：报告202402.pdf</span>
+          <span class="text-sm text-secondary">66%</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Confirmed Content -->
+      <div class="card">
+        <div class="flex-between mb-12">
+          <div class="flex items-center gap-12">
+            <span style="font-weight:600;font-size:16px;color:var(--text-primary)">已确认内容</span>
+            <span class="tag tag-success">2 条记录</span>
+          </div>
+          <div class="flex gap-8">
+            <button class="btn btn-secondary btn-sm">添加行</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--danger)">删除选中</button>
+            <button class="btn btn-ghost btn-sm">清空全部</button>
+          </div>
+        </div>
+        <div class="tbl-wrapper">
+          <table class="tbl">
+            <thead><tr><th>编号</th><th>名称</th><th>日期</th><th>金额</th><th>来源文件</th></tr></thead>
+            <tbody>
+              <tr><td>001</td><td>项目A</td><td>2024-01-01</td><td>1,000.00</td><td class="text-secondary">报告202401.pdf</td></tr>
+              <tr><td>002</td><td>项目B</td><td>2024-01-02</td><td>2,000.00</td><td class="text-secondary">报告202401.pdf</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="flex-between" style="padding-top:4px">
+        <button class="btn btn-secondary">配置提取规则</button>
+        <button class="btn btn-primary">生成 Excel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATE VARIANTS -->
+  <h2 style="font-size:16px;font-weight:600;color:var(--text-primary);margin:32px 0 16px">状态变体</h2>
+
+  <div class="grid-2">
+    <!-- State: Processing -->
+    <div class="card">
+      <div class="flex items-center gap-8 mb-12">
+        <span class="tag tag-info">01</span>
+        <span style="font-weight:600;font-size:14px;color:var(--text-primary)">处理中</span>
+      </div>
+      <div class="flex-between text-sm mb-8">
+        <span>正在处理：报告202402.pdf</span>
+        <span class="text-secondary">66%</span>
+      </div>
+      <div class="progress" style="height:10px"><div class="progress-fill" style="width:66%"></div></div>
+      <div class="flex-between text-sm text-secondary mt-8">
+        <span>已处理 2/3 文件</span><span>预计剩余 0.4s</span>
+      </div>
+      <div class="flex gap-8 mt-12">
+        <button class="btn btn-primary btn-sm" disabled>处理中...</button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--danger)">取消</button>
+      </div>
+    </div>
+
+    <!-- State: Error -->
+    <div class="card">
+      <div class="flex items-center gap-8 mb-12">
+        <span class="tag tag-danger">02</span>
+        <span style="font-weight:600;font-size:14px;color:var(--text-primary)">处理失败</span>
+      </div>
+      <div class="banner banner-danger mb-12">
+        <span>✗</span> 报告202402.pdf 提取失败：文件已损坏
+      </div>
+      <div class="progress" style="height:10px"><div class="progress-fill danger" style="width:33%"></div></div>
+      <div class="text-sm text-secondary mt-8">已处理 1/3，第 2 个文件失败</div>
+      <div class="flex gap-8 mt-12">
+        <button class="btn btn-secondary btn-sm">跳过并继续</button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--danger)">取消全部</button>
+      </div>
+    </div>
+
+    <!-- State: Excel Success -->
+    <div class="card">
+      <div class="flex items-center gap-8 mb-12">
+        <span class="tag tag-success">03</span>
+        <span style="font-weight:600;font-size:14px;color:var(--text-primary)">Excel 生成成功</span>
+      </div>
+      <div class="banner banner-success mb-12"><span>✓</span> Excel 文件已生成</div>
+      <div style="background:var(--bg-hover);border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:12px">
+        <div style="font-weight:600;color:var(--text-primary)">PDF信息汇总表_20240101_143025.xlsx</div>
+        <div class="text-sm text-secondary mt-4">3 条记录 · 4 列</div>
+      </div>
+      <div class="flex gap-8">
+        <button class="btn btn-primary btn-sm">打开文件</button>
+        <button class="btn btn-secondary btn-sm">打开文件夹</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PAGE 2: CONFIG WINDOW -->
+<!-- ============================================================ -->
+<section class="page" id="page2">
+  <div class="section-label">Page 02</div>
+  <h1>配置提取规则窗口（三栏布局）</h1>
+
+  <div class="window-frame" style="max-width:1100px">
+    <div class="window-titlebar">
+      <h3>配置提取规则</h3>
+      <div class="window-dots"><span></span><span></span><span></span></div>
+    </div>
+    <div class="window-body">
+      <!-- Rule name row -->
+      <div class="flex items-center gap-8" style="margin-bottom:16px">
+        <span style="font-size:13px;font-weight:500;white-space:nowrap">规则名称</span>
+        <input class="input" style="width:320px" value="default">
+        <button class="btn btn-ghost btn-sm">重命名</button>
+      </div>
+
+      <!-- Three columns -->
+      <div class="three-col">
+        <!-- LEFT: Rule table -->
+        <div class="col-left">
+          <div class="tbl-wrapper" style="flex:1;margin-bottom:8px">
+            <table class="tbl">
+              <thead><tr>
+                <th>字段</th><th style="width:60px">模式</th><th style="width:70px">页面范围</th><th style="width:70px">数据类型</th>
+              </tr></thead>
+              <tbody>
+                <tr class="selected"><td style="font-weight:600;color:var(--primary)">编号</td><td>表格</td><td>第1页</td><td>文本</td></tr>
+                <tr><td>名称</td><td>表格</td><td>第1页</td><td>文本</td></tr>
+                <tr><td>日期</td><td>表格</td><td>第1页</td><td>日期</td></tr>
+                <tr><td>金额</td><td>表格</td><td>第1页</td><td>数字</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flex gap-8">
+            <button class="btn btn-ghost btn-sm">添加</button>
+            <button class="btn btn-ghost btn-sm">删除</button>
+            <button class="btn btn-ghost btn-sm">上移</button>
+            <button class="btn btn-ghost btn-sm">下移</button>
+          </div>
+        </div>
+
+        <!-- CENTER: Parameters -->
+        <div class="col-center">
+          <span style="font-weight:600;font-size:14px;color:var(--text-primary);margin-bottom:12px;display:block">坐标参数</span>
+          <div class="form-group">
+            <label class="form-label">页面范围</label>
+            <input class="input" value="第1页">
+          </div>
+          <div class="form-group">
+            <label class="form-label">数据类型</label>
+            <select class="input"><option>文本</option><option selected>数字</option><option>日期</option></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">X1</label><input class="input" value="100"></div>
+            <div class="form-group"><label class="form-label">Y1</label><input class="input" value="200"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">X2</label><input class="input" value="150"></div>
+            <div class="form-group"><label class="form-label">Y2</label><input class="input" value="220"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: PDF Preview -->
+        <div class="col-right">
+          <div class="flex-between mb-12">
+            <button class="btn btn-secondary btn-sm">测试定位</button>
+            <span class="text-sm text-secondary">第 1 页 / 共 5 页</span>
+          </div>
+          <div class="preview-area">
+            <div class="icon">📄</div>
+            <p>点击"测试定位"加载 PDF 文件</p>
+            <div style="position:relative;width:200px;height:60px;margin-top:16px;border:2px dashed var(--primary);border-radius:4px;background:rgba(21,128,61,0.1)">
+              <span style="position:absolute;top:-20px;left:0;font-size:11px;color:var(--primary);font-weight:600">编号 (100,200)-(150,220)</span>
+            </div>
+          </div>
+          <div class="preview-nav">
+            <button class="btn btn-ghost btn-sm">上一页</button>
+            <button class="btn btn-ghost btn-sm">下一页</button>
+            <button class="btn btn-ghost btn-sm">适应窗口</button>
+            <button class="btn btn-ghost btn-sm">实际大小</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="config-bottom">
+        <button class="btn btn-secondary btn-sm">加载配置</button>
+        <div class="flex gap-8">
+          <button class="btn btn-secondary btn-sm">保存</button>
+          <button class="btn btn-secondary btn-sm">另存为</button>
+          <button class="btn btn-ghost btn-sm">关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PAGE 3: DIALOGS -->
+<!-- ============================================================ -->
+<section class="page" id="page3">
+  <div class="section-label">Page 03</div>
+  <h1>弹窗系列</h1>
+
+  <div class="grid-2">
+    <!-- Dialog A: Single Confirm -->
+    <div>
+      <div class="flex items-center gap-8 mb-12">
+        <span class="tag tag-muted">A</span>
+        <span style="font-weight:600;font-size:14px;color:var(--text-primary)">单个文件确认</span>
+      </div>
+      <div class="dialog-overlay">
+        <div class="dialog">
+          <div class="dialog-title">确认提取内容 — 报告202403.pdf</div>
+          <div class="tbl-wrapper mb-12">
+            <table class="tbl">
+              <thead><tr><th>编号</th><th>名称</th><th>日期</th><th>金额</th></tr></thead>
+              <tbody>
+                <tr><td>003</td><td>项目C</td><td style="background:#FEF3C7;color:#D97706;font-weight:500">空</td><td>3,000.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="banner banner-warn mb-12">
+            <span>⚠</span> 日期字段为空，请检查是否正确
+          </div>
+          <div class="dialog-actions">
+            <button class="btn btn-primary btn-sm">确认</button>
+            <button class="btn btn-secondary btn-sm">重新提取</button>
+            <button class="btn btn-ghost btn-sm">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog B: Batch Confirm -->
+    <div>
+      <div class="flex items-center gap-8 mb-12">
+        <span class="tag tag-muted">B</span>
+        <span style="font-weight:600;font-size:14px;color:var(--text-primary)">批量确认</span>
+      </div>
+      <div class="dialog-overlay">
+        <div class="dialog dialog-wide">
+          <div class="dialog-title">批量确认提取内容</div>
+          <div class="stat-cards mb-16">
+            <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">共处理</div></div>
+            <div class="stat-card"><div class="stat-num" style="color:var(--primary)">3</div><div class="stat-label">成功</div></div>
+            <div class="stat-card"><div class="stat-num" style="color:var(--danger)">0</div><div class="stat-label">失败</div></div>
+            <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">总记录</div></div>
+          </div>
+          <div class="tbl-wrapper mb-12">
+            <table class="tbl">
+              <thead><tr><th>编号</th><th>名称</th><th>日期</th><th>金额</th><th>来源</th></tr></thead>
+              <tbody>
+                <tr><td>001</td><td>项目A</td><td>2024-01-01</td><td>1,000</td><td class="text-secondary">报告1</td></tr>
+                <tr><td>002</td><td>项目B</td><td>2024-01-02</td><td>2,000</td><td class="text-secondary">报告2</td></tr>
+                <tr><td>003</td><td>项目C</td><td style="color:var(--danger)">空</td><td>3,000</td><td class="text-secondary">报告3</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dialog-actions">
+            <button class="btn btn-primary btn-sm">全部确认</button>
+            <button class="btn btn-secondary btn-sm">重新提取全部</button>
+            <button class="btn btn-ghost btn-sm">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog C: Repeat Detection -->
+    <div>
+      <div class="flex items-center gap-8 mb-12">
+        <span class="tag tag-muted">C</span>
+        <span style="font-weight:600;font-size:14px;color:var(--text-primary)">重复内容检测</span>
+      </div>
+      <div class="dialog-overlay">
+        <div class="dialog">
+          <div class="dialog-title">重复内容检测</div>
+          <div class="banner banner-warn mb-16">
+            <span>⚠</span> 检测到 1 条内容与已确认内容完全重复
+          </div>
+          <div class="tbl-wrapper mb-16">
+            <table class="tbl">
+              <thead><tr><th>编号</th><th>名称</th><th>日期</th><th>金额</th></tr></thead>
+              <tbody><tr style="background:#FEF3C7"><td>001</td><td>项目A</td><td>2024-01-01</td><td>1,000.00</td></tr></tbody>
+            </table>
+          </div>
+          <div class="radio-cards">
+            <div class="radio-card selected">
+              <div class="radio-dot"></div>
+              <div><div class="radio-text">覆盖</div><div class="radio-desc">用新提取内容替换已确认内容中的对应记录</div></div>
+            </div>
+            <div class="radio-card">
+              <div class="radio-dot"></div>
+              <div><div class="radio-text">放弃</div><div class="radio-desc">跳过该条记录，不修改已确认内容</div></div>
+            </div>
+            <div class="radio-card">
+              <div class="radio-dot"></div>
+              <div><div class="radio-text">新增</div><div class="radio-desc">保留该条记录（将导致内容重复）</div></div>
+            </div>
+          </div>
+          <div class="dialog-actions">
+            <button class="btn btn-primary btn-sm">确定</button>
+            <button class="btn btn-ghost btn-sm">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog D: Excel Option -->
+    <div>
+      <div class="flex items-center gap-8 mb-12">
+        <span class="tag tag-muted">D</span>
+        <span style="font-weight:600;font-size:14px;color:var(--text-primary)">生成 Excel</span>
+      </div>
+      <div class="dialog-overlay">
+        <div class="dialog">
+          <div class="dialog-title">生成 Excel 文件</div>
+          <div class="radio-cards">
+            <div class="radio-card selected">
+              <div class="radio-dot"></div>
+              <div>
+                <div class="radio-text">使用系统默认格式</div>
+                <div class="radio-desc">按配置的提取区域生成标准 .xlsx 文件，表头加粗，列宽自适应</div>
+              </div>
+            </div>
+            <div class="radio-card">
+              <div class="radio-dot"></div>
+              <div>
+                <div class="radio-text">加载自定义模板</div>
+                <div class="radio-desc">选择一个 .xlsx 文件作为格式模板，数据填入后保留模板样式</div>
+              </div>
+            </div>
+          </div>
+          <div class="dialog-actions">
+            <button class="btn btn-primary btn-sm">确定</button>
+            <button class="btn btn-ghost btn-sm">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog E: Unprocessed Files -->
+    <div>
+      <div class="flex items-center gap-8 mb-12">
+        <span class="tag tag-muted">E</span>
+        <span style="font-weight:600;font-size:14px;color:var(--text-primary)">存在未处理文件</span>
+      </div>
+      <div class="dialog-overlay">
+        <div class="dialog dialog-narrow">
+          <div class="dialog-title">存在未处理信息</div>
+          <div class="banner banner-warn mb-16">
+            <span>⚠</span> 当前还有 2 个文件未处理
+          </div>
+          <div style="background:var(--bg-hover);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px">
+            <div>• 报告202402.pdf</div>
+            <div>• 报告202403.pdf</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-primary" style="width:100%">继续生成</button>
+            <button class="btn btn-secondary" style="width:100%">处理文件</button>
+            <button class="btn btn-ghost" style="width:100%">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PAGE 4: DESIGN TOKENS -->
+<!-- ============================================================ -->
+<section class="page" id="page4">
+  <div class="section-label">Page 04</div>
+  <h1>设计 Token 参考</h1>
+
+  <!-- Color Palette -->
+  <div class="card mb-16">
+    <h2 style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:16px">配色体系</h2>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--text-body);margin-bottom:8px">主色系</h3>
+    <div class="token-grid mb-16">
+      <div><div class="token-swatch" style="background:var(--primary)"></div><div class="token-value">#15803D</div><div class="token-label">primary</div></div>
+      <div><div class="token-swatch" style="background:var(--primary-hover)"></div><div class="token-value">#16A34A</div><div class="token-label">primary-hover</div></div>
+      <div><div class="token-swatch" style="background:var(--primary-pressed)"></div><div class="token-value">#166534</div><div class="token-label">primary-pressed</div></div>
+      <div><div class="token-swatch" style="background:var(--primary-light)"></div><div class="token-value">#DCFCE7</div><div class="token-label">primary-light</div></div>
+      <div><div class="token-swatch" style="background:var(--primary-lighter)"></div><div class="token-value">#F0FDF4</div><div class="token-label">primary-lighter</div></div>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--text-body);margin-bottom:8px">语义色</h3>
+    <div class="token-grid mb-16">
+      <div><div class="token-swatch" style="background:var(--success)"></div><div class="token-value">#22C55E</div><div class="token-label">success</div></div>
+      <div><div class="token-swatch" style="background:var(--warning)"></div><div class="token-value">#F59E0B</div><div class="token-label">warning</div></div>
+      <div><div class="token-swatch" style="background:var(--danger)"></div><div class="token-value">#DC2626</div><div class="token-label">danger</div></div>
+      <div><div class="token-swatch" style="background:var(--info)"></div><div class="token-value">#64748B</div><div class="token-label">info</div></div>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--text-body);margin-bottom:8px">背景色</h3>
+    <div class="token-grid mb-16">
+      <div><div class="token-swatch" style="background:var(--bg-page);border:1px solid #ddd"></div><div class="token-value">#F8FAFC</div><div class="token-label">bg-page</div></div>
+      <div><div class="token-swatch" style="background:var(--bg-card);border:1px solid #ddd"></div><div class="token-value">#FFFFFF</div><div class="token-label">bg-card</div></div>
+      <div><div class="token-swatch" style="background:var(--bg-sidebar)"></div><div class="token-value">#F9FAFB</div><div class="token-label">bg-sidebar</div></div>
+      <div><div class="token-swatch" style="background:var(--bg-hover);border:1px solid #ddd"></div><div class="token-value">#F8FAFC</div><div class="token-label">bg-hover</div></div>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--text-body);margin-bottom:8px">文字色</h3>
+    <div class="token-grid">
+      <div><div class="token-swatch" style="background:var(--text-primary)"></div><div class="token-value">#0F172A</div><div class="token-label">text-primary</div></div>
+      <div><div class="token-swatch" style="background:var(--text-body)"></div><div class="token-value">#334155</div><div class="token-label">text-body</div></div>
+      <div><div class="token-swatch" style="background:var(--text-secondary)"></div><div class="token-value">#64748B</div><div class="token-label">text-secondary</div></div>
+      <div><div class="token-swatch" style="background:var(--text-placeholder)"></div><div class="token-value">#94A3B8</div><div class="token-label">text-placeholder</div></div>
+    </div>
+  </div>
+
+  <!-- Components -->
+  <div class="card">
+    <h2 style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:16px">组件样式</h2>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--text-body);margin-bottom:8px">按钮</h3>
+    <div class="flex gap-12 mb-16" style="flex-wrap:wrap;align-items:center">
+      <button class="btn btn-primary">Primary</button>
+      <button class="btn btn-secondary">Secondary</button>
+      <button class="btn btn-ghost">Ghost</button>
+      <button class="btn btn-danger">Danger</button>
+      <button class="btn btn-primary btn-sm">Small Primary</button>
+      <button class="btn btn-secondary btn-sm">Small Secondary</button>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--text-body);margin-bottom:8px">状态标签</h3>
+    <div class="flex gap-8 mb-16">
+      <span class="tag tag-success">已确认</span>
+      <span class="tag tag-warning">待处理</span>
+      <span class="tag tag-info">处理中</span>
+      <span class="tag tag-danger">失败</span>
+      <span class="tag tag-muted">已跳过</span>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--text-body);margin-bottom:8px">横幅</h3>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+      <div class="banner banner-success"><span>✓</span> 全部 3 个文件处理完成，共 3 条记录</div>
+      <div class="banner banner-warn"><span>⚠</span> 日期字段为空，请检查是否正确</div>
+      <div class="banner banner-danger"><span>✗</span> 报告202402.pdf 提取失败：文件已损坏</div>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--text-body);margin-bottom:8px">字体层级</h3>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:20px;font-weight:700;color:var(--text-primary)">H1 — 20px Bold #0F172A</div>
+      <div style="font-size:16px;font-weight:600;color:var(--text-primary)">H2 — 16px SemiBold #0F172A</div>
+      <div style="font-size:14px;font-weight:600;color:var(--text-primary)">H3 / section-title — 14px SemiBold #0F172A</div>
+      <div style="font-size:14px;color:var(--text-body)">Body — 14px Regular #334155</div>
+      <div style="font-size:12px;color:var(--text-secondary)">Caption — 12px Regular #64748B</div>
+      <div style="font-size:11px;color:var(--text-placeholder)">Small — 11px Regular #94A3B8</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- NAV ACTIVE STATE SCRIPT -->
+<!-- ============================================================ -->
+<script>
+(function(){
+  var nav = document.querySelector('.page-nav');
+  var links = nav.querySelectorAll('a');
+  function update(){
+    var hash = location.hash || '#page1';
+    links.forEach(function(a){
+      a.classList.toggle('active', a.getAttribute('href') === hash);
+    });
+    // Show target page, hide others
+    document.querySelectorAll('.page').forEach(function(p){
+      p.style.display = 'none';
+    });
+    var target = document.querySelector(hash);
+    if (target) target.style.display = 'block';
+  }
+  window.addEventListener('hashchange', update);
+  update();
+})();
+</script>
+
+</body>
+</html>

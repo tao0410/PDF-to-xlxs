@@ -4,18 +4,20 @@
 from typing import List
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QDialog, QFrame, QHBoxLayout, QHeaderView, QLabel,
-    QPushButton, QRadioButton, QTableWidget, QVBoxLayout,
+    QAbstractItemView,
+    QButtonGroup, QDialog, QFrame, QHBoxLayout, QHeaderView,
+    QLabel, QPushButton, QRadioButton,
+    QTableWidget, QVBoxLayout,
 )
-from table_utils import populate_table
+from table_utils import populate_table, WordWrapDelegate
 
 
 class RepeatDialog(QDialog):
     def __init__(self, columns: List[str], records: List[dict], parent=None):
         super().__init__(parent)
         self.setWindowTitle("重复内容检测")
-        self.resize(520, 420)
-        self.setMinimumSize(420, 340)
+        self.resize(700, 650)
+        self.setMinimumSize(500, 500)
         self._cols = columns
         self._recs = records
         self._choice = "overwrite"  # default per demo
@@ -24,8 +26,8 @@ class RepeatDialog(QDialog):
 
     def _init_ui(self):
         lo = QVBoxLayout(self)
-        lo.setContentsMargins(24, 28, 24, 28)
-        lo.setSpacing(14)
+        lo.setContentsMargins(20, 18, 20, 18)
+        lo.setSpacing(8)
 
         lo.addWidget(QLabel("重复内容检测", objectName="section-title"))
 
@@ -35,28 +37,36 @@ class RepeatDialog(QDialog):
         lo.addWidget(w)
 
         self.table = QTableWidget()
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table.setTextElideMode(Qt.ElideNone)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.verticalHeader().setVisible(False)
         lo.addWidget(self.table, 1)
         populate_table(self.table, self._cols,
                        [{c: r.get(c, "") for c in self._cols} for r in self._recs])
+        delegate = WordWrapDelegate(self.table)
+        for ci in range(self.table.columnCount()):
+            self.table.setItemDelegateForColumn(ci, delegate)
+        self.table.resizeRowsToContents()
 
         lo.addWidget(QLabel("请选择处理方式："))
 
-        # Card-style radio items
+        # Card-style radio items (QButtonGroup for mutual exclusion)
         options = [
             ("overwrite", "覆盖", "用新提取内容替换已确认内容中的对应记录"),
             ("skip", "放弃", "跳过该条记录，不修改已确认内容"),
             ("add", "新增", "保留该条记录（将导致内容重复）"),
         ]
+        group = QButtonGroup(self)
         for key, title, desc in options:
             card = QFrame(objectName=("radio-card-selected" if key == "overwrite" else "radio-card"))
             cl = QHBoxLayout(card)
-            cl.setContentsMargins(12, 12, 16, 12)
+            cl.setContentsMargins(4, 3, 6, 3)
             cl.setSpacing(10)
 
             rb = QRadioButton()
             rb.setChecked(key == "overwrite")
+            group.addButton(rb)
             cl.addWidget(rb, alignment=Qt.AlignTop)
 
             tl = QVBoxLayout()

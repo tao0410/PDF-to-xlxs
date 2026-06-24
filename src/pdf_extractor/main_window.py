@@ -6,7 +6,7 @@ import os
 import time
 from typing import Dict, List, Optional
 
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QSize, QTimer
 from PyQt5.QtGui import QColor, QDragEnterEvent, QDropEvent, QFont, QKeySequence, QPainter
 from PyQt5.QtWidgets import (
     QAbstractItemView,
@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QHeaderView,
     QLabel,
+    QLineEdit,
     QMainWindow,
     QMessageBox,
     QProgressBar,
@@ -25,7 +26,7 @@ from PyQt5.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
-    QWidget,
+    QSizePolicy, QWidget,
 )
 
 from app_utils import get_app_dir, get_exe_dir
@@ -39,7 +40,7 @@ from pdf_extractor import PdfExtractor
 from repeat_dialog import RepeatDialog
 from session_manager import SessionManager
 from single_confirm_dialog import SingleConfirmDialog
-from table_utils import table_to_records
+from table_utils import populate_table, table_to_records, WordWrapDelegate
 from unprocessed_dialog import UnprocessedDialog
 
 logger = logging.getLogger(__name__)
@@ -92,14 +93,45 @@ class StatusTagDelegate(QStyledItemDelegate):
         painter.restore()
 
 
+class PillLabel(QWidget):
+    """胶囊（pill）标签 — 与 StatusTagDelegate 一致的绘制效果。"""
+
+    def __init__(self, text="", bg_color="#DCFCE7", fg_color="#15803D", parent=None):
+        super().__init__(parent)
+        self._text = text
+        self._bg = QColor(bg_color)
+        self._fg = QColor(fg_color)
+        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+
+    def setText(self, text):
+        self._text = text
+        self.update()
+        self.updateGeometry()
+
+    def sizeHint(self):
+        fm = self.fontMetrics()
+        return QSize(fm.horizontalAdvance(self._text) + 24, fm.height() + 8)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setBrush(self._bg)
+        painter.setPen(Qt.NoPen)
+        r = self.rect().adjusted(2, 2, -2, -2)
+        painter.drawRoundedRect(r, r.height() / 2, r.height() / 2)
+        painter.setPen(self._fg)
+        painter.drawText(self.rect(), Qt.AlignCenter, self._text)
+        painter.end()
+
+
 class MainWindow(QMainWindow):
     """主窗口。"""
 
     def __init__(self):
         super().__init__()
         self.setWindowTitle("PDF信息提取工具")
-        self.resize(1000, 700)
-        self.setMinimumSize(800, 550)
+        self.resize(1000, 850)
+        self.setMinimumSize(800, 650)
         self.setAcceptDrops(True)
 
         self.config = ConfigManager.get_default()
@@ -193,6 +225,7 @@ class MainWindow(QMainWindow):
         self.btn_start.setObjectName("btn-primary")
         self.btn_cancel = QPushButton("取消")
         self.btn_cancel.setObjectName("btn-ghost")
+        self.btn_cancel.setStyleSheet("color: #DC2626;")
         self.btn_cancel.setEnabled(False)
         row.addWidget(self.btn_start)
         row.addStretch()
@@ -219,14 +252,14 @@ class MainWindow(QMainWindow):
         hdr2 = QHBoxLayout()
         self.lbl_content_section = QLabel("已确认内容", objectName="section-title")
         hdr2.addWidget(self.lbl_content_section)
-        self.lbl_record_stats = QLabel("0 条记录")
-        self.lbl_record_stats.setObjectName("record-tag")
+        self.lbl_record_stats = PillLabel("0 条记录")
         hdr2.addWidget(self.lbl_record_stats)
         hdr2.addStretch()
         self.btn_add_record = QPushButton("添加行")
         self.btn_add_record.setObjectName("btn-secondary")
         self.btn_delete_records = QPushButton("删除选中")
         self.btn_delete_records.setObjectName("btn-ghost")
+        self.btn_delete_records.setStyleSheet("color: #DC2626;")
         self.btn_clear_records = QPushButton("清空全部")
         self.btn_clear_records.setObjectName("btn-ghost")
         hdr2.addWidget(self.btn_add_record)
@@ -239,7 +272,7 @@ class MainWindow(QMainWindow):
         self.content_table.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.content_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.content_table.setAlternatingRowColors(True)
-        self.content_table.setEditTriggers(QAbstractItemView.DoubleClicked | QAbstractItemView.EditKeyPressed)
+        self.content_table.setEditTriggers(QAbstractItemView.CurrentChanged)
         self.content_table.verticalHeader().setVisible(False)
         cc.addWidget(self.content_table, 1)
         layout.addWidget(content_card, 2)
@@ -268,6 +301,7 @@ class MainWindow(QMainWindow):
         self.btn_add_record.clicked.connect(self._add_content_row)
         self.btn_delete_records.clicked.connect(self._delete_content_rows)
         self.btn_clear_records.clicked.connect(self._clear_all_records)
+        self.content_table.horizontalHeader().sectionResized.connect(self._resize_content_rows)
         self.content_table.cellChanged.connect(self._on_content_changed)
 
     def _setup_shortcuts(self):
@@ -329,18 +363,20 @@ class MainWindow(QMainWindow):
 
     def _refresh_content_table(self):
         cols = self._content_columns()
-        self.content_table.blockSignals(True)
-        self.content_table.setColumnCount(len(cols))
-        self.content_table.setHorizontalHeaderLabels(cols)
-        self.content_table.setRowCount(len(self.confirmed_records))
-        for row, record in enumerate(self.confirmed_records):
-            for ci, cn in enumerate(cols):
-                self.content_table.setItem(row, ci, QTableWidgetItem(str(record.get(cn, ""))))
-        self.content_table.blockSignals(False)
+
+        rows = [{c: record.get(c, "") for c in cols} for record in self.confirmed_records]
+        populate_table(self.content_table, cols, rows, widget_type="item")
+
+        delegate = WordWrapDelegate(self.content_table)
+        for ci in range(self.content_table.columnCount()):
+            self.content_table.setItemDelegateForColumn(ci, delegate)
+
+        self._resize_content_rows()
         self.lbl_record_stats.setText(f"{len(self.confirmed_records)} 条记录")
-        self.lbl_record_stats.setObjectName("record-tag")
-        self.lbl_record_stats.style().unpolish(self.lbl_record_stats)
-        self.lbl_record_stats.style().polish(self.lbl_record_stats)
+
+    def _resize_content_rows(self):
+        """调整已确认内容表格所有行高以适应 word-wrap 内容。"""
+        self.content_table.resizeRowsToContents()
 
     def _update_ui_state(self):
         has_records = len(self.confirmed_records) > 0
@@ -559,22 +595,27 @@ class MainWindow(QMainWindow):
             return records
         filtered = list(records)
         cmp = [c for c in cols if c != SOURCE_COL]
-        for i in sorted(dup_idx, reverse=True):
-            rec = filtered[i]
-            dlg = RepeatDialog(cols, [rec], self)
-            if dlg.exec_() != RepeatDialog.Accepted:
+
+        dup_records = [filtered[i] for i in dup_idx]
+        dlg = RepeatDialog(cols, dup_records, self)
+        if dlg.exec_() != RepeatDialog.Accepted:
+            for i in sorted(dup_idx, reverse=True):
                 filtered.pop(i)
-                continue
-            choice = dlg.get_choice()
-            if choice == "skip":
+            return filtered
+
+        choice = dlg.get_choice()
+        if choice == "skip":
+            for i in sorted(dup_idx, reverse=True):
                 filtered.pop(i)
-            elif choice == "overwrite":
+        elif choice == "overwrite":
+            for i in sorted(dup_idx, reverse=True):
+                rec = filtered[i]
                 for j, ex in enumerate(self.confirmed_records):
                     if all(str(rec.get(c, "")) == str(ex.get(c, "")) for c in cmp):
                         self.confirmed_records[j] = rec
                         break
                 filtered.pop(i)
-            # "add": keep
+        # "add": keep all
         return filtered
 
     # ═══════════════ Single Confirm ═══════════════
@@ -587,6 +628,7 @@ class MainWindow(QMainWindow):
             self._refresh_file_table()
             self._update_ui_state()
             self._save_session()
+            self.progress_bar.setValue(0)
             return
 
         records = result.get("records", []) or [{}]
@@ -625,6 +667,7 @@ class MainWindow(QMainWindow):
         self._refresh_content_table()
         self._update_ui_state()
         self._save_session()
+        self.progress_bar.setValue(0)
 
     def _remove_processed_files(self):
         """移除已确认和已跳过的文件（P0-1: 处理完成后自动清空）。"""
@@ -678,6 +721,7 @@ class MainWindow(QMainWindow):
                 self._refresh_file_table()
                 self.btn_start.setEnabled(False)
                 self.btn_cancel.setEnabled(True)
+                self.progress_bar.setValue(0)
                 self._worker = ExtractionWorker(self.config, self._pending_paths, self)
                 self._worker.progress.connect(self._on_progress)
                 self._worker.file_failed.connect(self._on_file_failed)
@@ -704,6 +748,7 @@ class MainWindow(QMainWindow):
         self._refresh_content_table()
         self._update_ui_state()
         self._save_session()
+        self.progress_bar.setValue(0)
 
     # ═══════════════ Config ═══════════════
 
@@ -815,6 +860,7 @@ class MainWindow(QMainWindow):
         self.confirmed_records = table_to_records(self.content_table, self._content_columns())
         self.lbl_record_stats.setText(f"{len(self.confirmed_records)} 条记录")
         self._save_session()
+        self._resize_content_rows()
 
     # ═══════════════ Session ═══════════════
 

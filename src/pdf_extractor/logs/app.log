@@ -1,91 +1,717 @@
-2026-06-10 00:13:58 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
-2026-06-10 00:13:58 [INFO] session_manager: 会话已恢复
-2026-06-10 00:13:58 [INFO] main_window: 会话已恢复
-2026-06-10 00:14:10 [INFO] session_manager: 会话已保存
-2026-06-10 00:14:12 [INFO] session_manager: 会话已保存
-2026-06-10 00:17:39 [INFO] config_manager: 配置已保存: D:\AppData\workspace\src\pdf_extractor\default.cfg
-2026-06-10 00:17:41 [INFO] session_manager: 会话已保存
-2026-06-10 00:17:46 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
-2026-06-10 00:17:46 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
-2026-06-10 00:17:46 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
-2026-06-10 00:17:46 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
-2026-06-10 00:17:46 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
-2026-06-10 00:17:46 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
-2026-06-10 00:17:46 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
-2026-06-10 00:17:46 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
-2026-06-10 00:17:46 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000484(公开）.pdf
-2026-06-10 00:17:46 [INFO] session_manager: 会话已保存
-2026-06-10 00:18:13 [INFO] session_manager: 会话已保存
-2026-06-10 00:18:19 [INFO] session_manager: 会话已保存
-2026-06-10 00:18:20 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
-2026-06-10 00:18:20 [INFO] session_manager: 会话已恢复
-2026-06-10 00:18:20 [INFO] main_window: 会话已恢复
-2026-06-10 00:18:25 [INFO] session_manager: 会话已保存
-2026-06-10 00:21:37 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
-2026-06-10 00:21:38 [INFO] session_manager: 会话已恢复
-2026-06-10 00:21:38 [INFO] main_window: 会话已恢复
-2026-06-10 00:36:55 [INFO] session_manager: 会话已保存
-2026-06-10 00:36:56 [INFO] session_manager: 会话已保存
-2026-06-10 00:48:20 [WARNING] config_manager: 配置文件格式无效: d:\AppData\workspace\src\pdf_extractor\default.cfg，使用默认配置
-2026-06-10 00:48:20 [INFO] session_manager: 会话已恢复
-2026-06-10 00:48:20 [INFO] main_window: 会话已恢复
-2026-06-10 00:52:23 [INFO] config_manager: 配置已保存: D:\AppData\workspace\src\pdf_extractor\default.cfg
-2026-06-10 00:52:25 [INFO] session_manager: 会话已保存
-2026-06-10 00:52:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
-2026-06-10 00:52:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
-2026-06-10 00:52:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
-2026-06-10 00:52:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
-2026-06-10 00:52:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
-2026-06-10 00:52:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
-2026-06-10 00:52:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
-2026-06-10 00:52:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
-2026-06-10 00:52:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000484(公开）.pdf
-2026-06-10 00:52:30 [INFO] session_manager: 会话已保存
-2026-06-10 00:55:36 [INFO] session_manager: 会话已保存
-2026-06-10 00:55:51 [INFO] excel_generator: Excel 已生成: D:/文件/公司AI学习/PDF信息汇总表_20260610_005543.xlsx
-2026-06-10 00:55:54 [INFO] main_window: Excel 导出成功: D:/文件/公司AI学习/PDF信息汇总表_20260610_005543.xlsx
-2026-06-10 00:56:04 [INFO] session_manager: 会话已保存
-2026-06-10 00:56:31 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
-2026-06-10 00:56:32 [INFO] session_manager: 会话已恢复
-2026-06-10 00:56:32 [INFO] main_window: 会话已恢复
-2026-06-10 00:57:40 [INFO] config_manager: 配置已保存: D:\AppData\workspace\src\pdf_extractor\default.cfg
-2026-06-10 00:57:41 [INFO] session_manager: 会话已保存
-2026-06-10 01:05:46 [INFO] session_manager: 会话已保存
-2026-06-10 01:05:47 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
-2026-06-10 01:05:47 [INFO] session_manager: 会话已恢复
-2026-06-10 01:05:47 [INFO] main_window: 会话已恢复
-2026-06-10 01:05:52 [INFO] session_manager: 会话已保存
-2026-06-10 01:05:53 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
-2026-06-10 01:05:53 [INFO] session_manager: 会话已恢复
-2026-06-10 01:05:53 [INFO] main_window: 会话已恢复
-2026-06-10 01:05:59 [INFO] session_manager: 会话已保存
-2026-06-10 01:10:07 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
-2026-06-10 01:10:07 [INFO] session_manager: 会话已恢复
-2026-06-10 01:10:07 [INFO] main_window: 会话已恢复
-2026-06-10 01:10:16 [INFO] session_manager: 会话已保存
-2026-06-10 01:10:27 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000486(公开）.pdf
-2026-06-10 01:10:30 [INFO] session_manager: 会话已保存
-2026-06-10 01:10:33 [INFO] session_manager: 会话已保存
-2026-06-10 01:10:38 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
-2026-06-10 01:10:38 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
-2026-06-10 01:10:38 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
-2026-06-10 01:10:38 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
-2026-06-10 01:10:38 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
-2026-06-10 01:10:38 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
-2026-06-10 01:10:38 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
-2026-06-10 01:10:38 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
-2026-06-10 01:10:38 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000484(公开）.pdf
-2026-06-10 01:10:38 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000486(公开）.pdf
-2026-06-10 01:10:38 [INFO] session_manager: 会话已保存
-2026-06-10 01:11:12 [INFO] session_manager: 会话已保存
-2026-06-10 01:11:12 [INFO] session_manager: 会话已保存
-2026-06-10 01:12:51 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
-2026-06-10 01:12:51 [INFO] session_manager: 会话已恢复
-2026-06-10 01:12:51 [INFO] main_window: 会话已恢复
-2026-06-10 01:13:17 [INFO] session_manager: 会话已保存
-2026-06-10 01:13:20 [INFO] session_manager: 会话已保存
-2026-06-10 01:24:30 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
-2026-06-10 01:24:31 [INFO] session_manager: 会话已恢复
-2026-06-10 01:24:31 [INFO] main_window: 会话已恢复
-2026-06-10 01:24:40 [INFO] session_manager: 会话已保存
-2026-06-10 01:24:41 [INFO] session_manager: 会话已保存
+2026-06-25 00:00:31 [INFO] session_manager: 会话已保存
+2026-06-25 00:00:32 [INFO] session_manager: 会话已保存
+2026-06-25 00:00:49 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:00:49 [INFO] session_manager: 会话已恢复
+2026-06-25 00:00:49 [INFO] main_window: 会话已恢复
+2026-06-25 00:00:57 [INFO] session_manager: 会话已保存
+2026-06-25 00:00:58 [INFO] session_manager: 会话已保存
+2026-06-25 00:07:47 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:07:47 [INFO] session_manager: 会话已恢复
+2026-06-25 00:07:47 [INFO] main_window: 会话已恢复
+2026-06-25 00:08:06 [INFO] session_manager: 会话已保存
+2026-06-25 00:14:00 [INFO] session_manager: 会话已保存
+2026-06-25 00:14:01 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:14:01 [INFO] session_manager: 会话已恢复
+2026-06-25 00:14:01 [INFO] main_window: 会话已恢复
+2026-06-25 00:14:03 [INFO] session_manager: 会话已保存
+2026-06-25 00:14:05 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:14:06 [INFO] session_manager: 会话已恢复
+2026-06-25 00:14:06 [INFO] main_window: 会话已恢复
+2026-06-25 00:14:20 [INFO] session_manager: 会话已保存
+2026-06-25 00:14:34 [INFO] session_manager: 会话已保存
+2026-06-25 00:14:35 [INFO] session_manager: 会话已保存
+2026-06-25 00:15:34 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:15:34 [INFO] session_manager: 会话已恢复
+2026-06-25 00:15:34 [INFO] main_window: 会话已恢复
+2026-06-25 00:15:49 [INFO] session_manager: 会话已保存
+2026-06-25 00:16:03 [INFO] session_manager: 会话已保存
+2026-06-25 00:23:04 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:23:05 [INFO] session_manager: 会话已恢复
+2026-06-25 00:23:05 [INFO] main_window: 会话已恢复
+2026-06-25 00:23:22 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 00:23:22 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 00:23:22 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 00:23:22 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 00:23:22 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
+2026-06-25 00:23:22 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
+2026-06-25 00:23:22 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
+2026-06-25 00:23:22 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
+2026-06-25 00:23:22 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000484(公开）.pdf
+2026-06-25 00:23:22 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000486(公开）.pdf
+2026-06-25 00:23:22 [INFO] session_manager: 会话已保存
+2026-06-25 00:23:33 [INFO] session_manager: 会话已保存
+2026-06-25 00:24:02 [INFO] config_manager: 配置已保存: D:/AppData/workspace/src/pdf_extractor/dist/工艺更改单.cfg
+2026-06-25 00:24:10 [INFO] session_manager: 会话已保存
+2026-06-25 00:24:30 [INFO] session_manager: 会话已保存
+2026-06-25 00:24:43 [INFO] session_manager: 会话已保存
+2026-06-25 00:26:19 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:26:19 [INFO] session_manager: 会话已恢复
+2026-06-25 00:26:19 [INFO] main_window: 会话已恢复
+2026-06-25 00:26:26 [INFO] config_manager: 配置已保存: D:/AppData/workspace/src/pdf_extractor/dist/工艺更改单.cfg
+2026-06-25 00:26:28 [INFO] session_manager: 会话已保存
+2026-06-25 00:27:00 [INFO] excel_generator: Excel (模板) 已生成: D:/AppData/workspace/PDF信息汇总表_20260625_002659.xlsx
+2026-06-25 00:27:03 [INFO] main_window: Excel 导出成功: D:/AppData/workspace/PDF信息汇总表_20260625_002659.xlsx
+2026-06-25 00:27:03 [INFO] session_manager: 会话已保存
+2026-06-25 00:27:09 [INFO] session_manager: 会话已保存
+2026-06-25 00:27:51 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:27:52 [INFO] session_manager: 会话已恢复
+2026-06-25 00:27:52 [INFO] main_window: 会话已恢复
+2026-06-25 00:27:54 [INFO] session_manager: 会话已保存
+2026-06-25 00:31:01 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:31:01 [INFO] session_manager: 会话已恢复
+2026-06-25 00:31:01 [INFO] main_window: 会话已恢复
+2026-06-25 00:31:05 [INFO] session_manager: 会话已保存
+2026-06-25 00:31:13 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 00:31:13 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 00:31:13 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 00:31:13 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 00:31:13 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
+2026-06-25 00:31:13 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
+2026-06-25 00:31:13 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
+2026-06-25 00:31:13 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
+2026-06-25 00:31:13 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000484(公开）.pdf
+2026-06-25 00:31:13 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000486(公开）.pdf
+2026-06-25 00:31:14 [INFO] session_manager: 会话已保存
+2026-06-25 00:31:19 [INFO] session_manager: 会话已保存
+2026-06-25 00:31:39 [INFO] session_manager: 会话已保存
+2026-06-25 00:34:37 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:34:38 [INFO] session_manager: 会话已恢复
+2026-06-25 00:34:38 [INFO] main_window: 会话已恢复
+2026-06-25 00:34:42 [INFO] session_manager: 会话已保存
+2026-06-25 00:34:42 [INFO] session_manager: 会话已保存
+2026-06-25 00:35:20 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:35:20 [INFO] session_manager: 会话已恢复
+2026-06-25 00:35:20 [INFO] main_window: 会话已恢复
+2026-06-25 00:40:20 [INFO] session_manager: 会话已保存
+2026-06-25 00:41:12 [INFO] session_manager: 会话已保存
+2026-06-25 00:47:37 [INFO] session_manager: 会话已保存
+2026-06-25 00:47:38 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:47:38 [INFO] session_manager: 会话已恢复
+2026-06-25 00:47:38 [INFO] main_window: 会话已恢复
+2026-06-25 00:47:39 [INFO] session_manager: 会话已保存
+2026-06-25 00:47:40 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:47:40 [INFO] session_manager: 会话已恢复
+2026-06-25 00:47:40 [INFO] main_window: 会话已恢复
+2026-06-25 00:47:42 [INFO] session_manager: 会话已保存
+2026-06-25 00:47:43 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:47:43 [INFO] session_manager: 会话已恢复
+2026-06-25 00:47:43 [INFO] main_window: 会话已恢复
+2026-06-25 00:47:44 [INFO] session_manager: 会话已保存
+2026-06-25 00:47:45 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:47:45 [INFO] session_manager: 会话已恢复
+2026-06-25 00:47:45 [INFO] main_window: 会话已恢复
+2026-06-25 00:47:47 [INFO] session_manager: 会话已保存
+2026-06-25 00:47:50 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:47:50 [INFO] session_manager: 会话已恢复
+2026-06-25 00:47:50 [INFO] main_window: 会话已恢复
+2026-06-25 00:48:09 [INFO] session_manager: 会话已保存
+2026-06-25 00:48:11 [INFO] session_manager: 会话已保存
+2026-06-25 00:48:41 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:48:42 [INFO] session_manager: 会话已恢复
+2026-06-25 00:48:42 [INFO] main_window: 会话已恢复
+2026-06-25 00:51:44 [INFO] session_manager: 会话已保存
+2026-06-25 00:51:48 [INFO] session_manager: 会话已保存
+2026-06-25 00:52:07 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:52:07 [INFO] session_manager: 会话已恢复
+2026-06-25 00:52:07 [INFO] main_window: 会话已恢复
+2026-06-25 00:52:23 [INFO] session_manager: 会话已保存
+2026-06-25 00:52:25 [INFO] session_manager: 会话已保存
+2026-06-25 00:59:48 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 00:59:48 [INFO] session_manager: 会话已恢复
+2026-06-25 00:59:48 [INFO] main_window: 会话已恢复
+2026-06-25 01:00:30 [INFO] session_manager: 会话已保存
+2026-06-25 01:01:56 [INFO] session_manager: 会话已保存
+2026-06-25 01:01:57 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:01:57 [INFO] session_manager: 会话已恢复
+2026-06-25 01:01:57 [INFO] main_window: 会话已恢复
+2026-06-25 01:02:21 [INFO] session_manager: 会话已保存
+2026-06-25 01:02:22 [INFO] session_manager: 会话已保存
+2026-06-25 01:03:58 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:03:58 [INFO] session_manager: 会话已恢复
+2026-06-25 01:03:58 [INFO] main_window: 会话已恢复
+2026-06-25 01:04:24 [INFO] session_manager: 会话已保存
+2026-06-25 01:05:37 [INFO] session_manager: 会话已保存
+2026-06-25 01:05:37 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:05:37 [INFO] session_manager: 会话已恢复
+2026-06-25 01:05:37 [INFO] main_window: 会话已恢复
+2026-06-25 01:06:01 [INFO] session_manager: 会话已保存
+2026-06-25 01:10:36 [INFO] session_manager: 会话已保存
+2026-06-25 01:10:37 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:10:37 [INFO] session_manager: 会话已恢复
+2026-06-25 01:10:37 [INFO] main_window: 会话已恢复
+2026-06-25 01:11:01 [INFO] session_manager: 会话已保存
+2026-06-25 01:13:27 [INFO] session_manager: 会话已保存
+2026-06-25 01:13:28 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:13:28 [INFO] session_manager: 会话已恢复
+2026-06-25 01:13:28 [INFO] main_window: 会话已恢复
+2026-06-25 01:13:51 [INFO] session_manager: 会话已保存
+2026-06-25 01:13:53 [INFO] session_manager: 会话已保存
+2026-06-25 01:15:17 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:15:17 [INFO] session_manager: 会话已恢复
+2026-06-25 01:15:17 [INFO] main_window: 会话已恢复
+2026-06-25 01:15:50 [INFO] session_manager: 会话已保存
+2026-06-25 01:25:17 [INFO] session_manager: 会话已保存
+2026-06-25 01:25:19 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:25:19 [INFO] session_manager: 会话已恢复
+2026-06-25 01:25:19 [INFO] main_window: 会话已恢复
+2026-06-25 01:29:59 [INFO] session_manager: 会话已保存
+2026-06-25 01:30:00 [INFO] session_manager: 会话已保存
+2026-06-25 01:30:01 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:30:01 [INFO] session_manager: 会话已恢复
+2026-06-25 01:30:01 [INFO] main_window: 会话已恢复
+2026-06-25 01:30:27 [INFO] session_manager: 会话已保存
+2026-06-25 01:31:12 [INFO] session_manager: 会话已保存
+2026-06-25 01:31:20 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:31:20 [INFO] session_manager: 会话已恢复
+2026-06-25 01:31:20 [INFO] main_window: 会话已恢复
+2026-06-25 01:31:31 [INFO] session_manager: 会话已保存
+2026-06-25 01:31:31 [INFO] session_manager: 会话已保存
+2026-06-25 01:31:44 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:31:44 [INFO] session_manager: 会话已恢复
+2026-06-25 01:31:44 [INFO] main_window: 会话已恢复
+2026-06-25 01:31:55 [INFO] session_manager: 会话已保存
+2026-06-25 01:31:55 [INFO] session_manager: 会话已保存
+2026-06-25 01:32:07 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:32:07 [INFO] session_manager: 会话已恢复
+2026-06-25 01:32:07 [INFO] main_window: 会话已恢复
+2026-06-25 01:32:23 [INFO] session_manager: 会话已保存
+2026-06-25 01:32:37 [INFO] session_manager: 会话已保存
+2026-06-25 01:32:38 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:32:38 [INFO] session_manager: 会话已恢复
+2026-06-25 01:32:38 [INFO] main_window: 会话已恢复
+2026-06-25 01:33:05 [INFO] session_manager: 会话已保存
+2026-06-25 01:33:56 [INFO] session_manager: 会话已保存
+2026-06-25 01:33:57 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:33:57 [INFO] session_manager: 会话已恢复
+2026-06-25 01:33:57 [INFO] main_window: 会话已恢复
+2026-06-25 01:34:09 [INFO] session_manager: 会话已保存
+2026-06-25 01:34:44 [INFO] session_manager: 会话已保存
+2026-06-25 01:35:09 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:35:10 [INFO] session_manager: 会话已恢复
+2026-06-25 01:35:10 [INFO] main_window: 会话已恢复
+2026-06-25 01:35:14 [INFO] session_manager: 会话已保存
+2026-06-25 01:35:22 [INFO] session_manager: 会话已保存
+2026-06-25 01:36:18 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:36:18 [INFO] session_manager: 会话已恢复
+2026-06-25 01:36:18 [INFO] main_window: 会话已恢复
+2026-06-25 01:36:28 [INFO] session_manager: 会话已保存
+2026-06-25 01:36:45 [INFO] session_manager: 会话已保存
+2026-06-25 01:37:06 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:37:06 [INFO] session_manager: 会话已恢复
+2026-06-25 01:37:06 [INFO] main_window: 会话已恢复
+2026-06-25 01:37:35 [INFO] session_manager: 会话已保存
+2026-06-25 01:37:36 [INFO] session_manager: 会话已保存
+2026-06-25 01:37:51 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:37:51 [INFO] session_manager: 会话已恢复
+2026-06-25 01:37:51 [INFO] main_window: 会话已恢复
+2026-06-25 01:37:58 [INFO] session_manager: 会话已保存
+2026-06-25 01:38:11 [INFO] session_manager: 会话已保存
+2026-06-25 01:38:23 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:38:23 [INFO] session_manager: 会话已恢复
+2026-06-25 01:38:23 [INFO] main_window: 会话已恢复
+2026-06-25 01:38:41 [INFO] session_manager: 会话已保存
+2026-06-25 01:39:55 [INFO] session_manager: 会话已保存
+2026-06-25 01:40:08 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:40:08 [INFO] session_manager: 会话已恢复
+2026-06-25 01:40:08 [INFO] main_window: 会话已恢复
+2026-06-25 01:40:29 [INFO] session_manager: 会话已保存
+2026-06-25 01:40:29 [INFO] session_manager: 会话已保存
+2026-06-25 01:42:47 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:42:47 [INFO] session_manager: 会话已恢复
+2026-06-25 01:42:47 [INFO] main_window: 会话已恢复
+2026-06-25 01:43:52 [INFO] session_manager: 会话已保存
+2026-06-25 01:44:20 [INFO] session_manager: 会话已保存
+2026-06-25 01:44:21 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:44:21 [INFO] session_manager: 会话已恢复
+2026-06-25 01:44:21 [INFO] main_window: 会话已恢复
+2026-06-25 01:45:14 [INFO] session_manager: 会话已保存
+2026-06-25 01:45:17 [INFO] session_manager: 会话已保存
+2026-06-25 01:46:19 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:46:19 [INFO] session_manager: 会话已恢复
+2026-06-25 01:46:19 [INFO] main_window: 会话已恢复
+2026-06-25 01:46:41 [INFO] session_manager: 会话已保存
+2026-06-25 01:50:01 [INFO] session_manager: 会话已保存
+2026-06-25 01:50:02 [INFO] session_manager: 会话已保存
+2026-06-25 01:51:57 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:51:57 [INFO] session_manager: 会话已恢复
+2026-06-25 01:51:57 [INFO] main_window: 会话已恢复
+2026-06-25 01:52:22 [ERROR] config_dialog: PDF 渲染失败
+Traceback (most recent call last):
+  File "d:\AppData\workspace\src\pdf_extractor\config_dialog.py", line 247, in _render
+    pen.setColor(self._hl_color[0], self._hl_color[1], self._hl_color[2])
+TypeError: setColor(self, Union[QColor, Qt.GlobalColor, QGradient]): argument 1 has unexpected type 'int'
+2026-06-25 01:52:22 [ERROR] config_dialog: PDF 渲染失败
+Traceback (most recent call last):
+  File "d:\AppData\workspace\src\pdf_extractor\config_dialog.py", line 247, in _render
+    pen.setColor(self._hl_color[0], self._hl_color[1], self._hl_color[2])
+TypeError: setColor(self, Union[QColor, Qt.GlobalColor, QGradient]): argument 1 has unexpected type 'int'
+2026-06-25 01:53:30 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:53:30 [INFO] session_manager: 会话已恢复
+2026-06-25 01:53:30 [INFO] main_window: 会话已恢复
+2026-06-25 01:54:07 [INFO] config_manager: 配置已保存: D:/AppData/workspace/src/pdf_extractor/dist/工艺更改单.cfg
+2026-06-25 01:54:10 [INFO] session_manager: 会话已保存
+2026-06-25 01:54:11 [INFO] session_manager: 会话已保存
+2026-06-25 01:55:28 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:55:29 [INFO] session_manager: 会话已恢复
+2026-06-25 01:55:29 [INFO] main_window: 会话已恢复
+2026-06-25 01:55:45 [INFO] session_manager: 会话已保存
+2026-06-25 01:55:53 [INFO] session_manager: 会话已保存
+2026-06-25 01:57:53 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 01:57:54 [INFO] session_manager: 会话已恢复
+2026-06-25 01:57:54 [INFO] main_window: 会话已恢复
+2026-06-25 02:00:00 [INFO] session_manager: 会话已保存
+2026-06-25 02:00:03 [INFO] session_manager: 会话已保存
+2026-06-25 19:49:51 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 19:49:51 [INFO] session_manager: 会话已恢复
+2026-06-25 19:49:51 [INFO] main_window: 会话已恢复
+2026-06-25 19:59:33 [INFO] session_manager: 会话已保存
+2026-06-25 19:59:34 [INFO] session_manager: 会话已保存
+2026-06-25 20:00:01 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:00:02 [INFO] session_manager: 会话已恢复
+2026-06-25 20:00:02 [INFO] main_window: 会话已恢复
+2026-06-25 20:08:22 [INFO] session_manager: 会话已保存
+2026-06-25 20:08:23 [INFO] session_manager: 会话已保存
+2026-06-25 20:08:23 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:08:23 [INFO] session_manager: 会话已恢复
+2026-06-25 20:08:23 [INFO] main_window: 会话已恢复
+2026-06-25 20:10:02 [INFO] session_manager: 会话已保存
+2026-06-25 20:10:03 [INFO] session_manager: 会话已保存
+2026-06-25 20:10:25 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:10:25 [INFO] session_manager: 会话已恢复
+2026-06-25 20:10:25 [INFO] main_window: 会话已恢复
+2026-06-25 20:12:03 [INFO] session_manager: 会话已保存
+2026-06-25 20:12:03 [INFO] session_manager: 会话已保存
+2026-06-25 20:12:28 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:12:28 [INFO] session_manager: 会话已恢复
+2026-06-25 20:12:28 [INFO] main_window: 会话已恢复
+2026-06-25 20:18:38 [INFO] session_manager: 会话已保存
+2026-06-25 20:19:02 [INFO] session_manager: 会话已保存
+2026-06-25 20:33:52 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:33:52 [INFO] session_manager: 会话已恢复
+2026-06-25 20:33:52 [INFO] main_window: 会话已恢复
+2026-06-25 20:34:54 [INFO] session_manager: 会话已保存
+2026-06-25 20:38:54 [INFO] session_manager: 会话已保存
+2026-06-25 20:38:55 [INFO] session_manager: 会话已保存
+2026-06-25 20:38:56 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:38:56 [INFO] session_manager: 会话已恢复
+2026-06-25 20:38:56 [INFO] main_window: 会话已恢复
+2026-06-25 20:39:10 [INFO] session_manager: 会话已保存
+2026-06-25 20:40:07 [INFO] session_manager: 会话已保存
+2026-06-25 20:40:31 [INFO] session_manager: 会话已保存
+2026-06-25 20:41:04 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:41:04 [INFO] session_manager: 会话已恢复
+2026-06-25 20:41:04 [INFO] main_window: 会话已恢复
+2026-06-25 20:41:28 [INFO] session_manager: 会话已保存
+2026-06-25 20:41:55 [INFO] session_manager: 会话已保存
+2026-06-25 20:42:14 [INFO] session_manager: 会话已保存
+2026-06-25 20:42:25 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:42:25 [INFO] session_manager: 会话已恢复
+2026-06-25 20:42:25 [INFO] main_window: 会话已恢复
+2026-06-25 20:42:30 [INFO] session_manager: 会话已保存
+2026-06-25 20:42:31 [INFO] session_manager: 会话已保存
+2026-06-25 20:49:18 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:49:18 [INFO] session_manager: 会话已恢复
+2026-06-25 20:49:18 [INFO] main_window: 会话已恢复
+2026-06-25 20:49:29 [INFO] session_manager: 会话已保存
+2026-06-25 20:49:31 [INFO] session_manager: 会话已保存
+2026-06-25 20:50:15 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:50:15 [INFO] session_manager: 会话已恢复
+2026-06-25 20:50:15 [INFO] main_window: 会话已恢复
+2026-06-25 20:50:23 [INFO] session_manager: 会话已保存
+2026-06-25 20:50:24 [INFO] session_manager: 会话已保存
+2026-06-25 20:50:44 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:50:44 [INFO] session_manager: 会话已恢复
+2026-06-25 20:50:44 [INFO] main_window: 会话已恢复
+2026-06-25 20:51:12 [INFO] config_manager: 配置已保存: D:/AppData/workspace/src/pdf_extractor/dist/工艺更改单.cfg
+2026-06-25 20:51:14 [INFO] session_manager: 会话已保存
+2026-06-25 20:51:14 [INFO] session_manager: 会话已保存
+2026-06-25 20:52:03 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:52:03 [INFO] session_manager: 会话已恢复
+2026-06-25 20:52:03 [INFO] main_window: 会话已恢复
+2026-06-25 20:56:20 [INFO] session_manager: 会话已保存
+2026-06-25 20:56:20 [INFO] session_manager: 会话已保存
+2026-06-25 20:56:21 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:56:21 [INFO] session_manager: 会话已恢复
+2026-06-25 20:56:21 [INFO] main_window: 会话已恢复
+2026-06-25 20:57:11 [INFO] session_manager: 会话已保存
+2026-06-25 20:57:28 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:57:29 [INFO] session_manager: 会话已恢复
+2026-06-25 20:57:29 [INFO] main_window: 会话已恢复
+2026-06-25 20:57:57 [INFO] session_manager: 会话已保存
+2026-06-25 20:58:04 [INFO] session_manager: 会话已保存
+2026-06-25 20:58:34 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:58:34 [INFO] session_manager: 会话已恢复
+2026-06-25 20:58:34 [INFO] main_window: 会话已恢复
+2026-06-25 20:58:37 [INFO] session_manager: 会话已保存
+2026-06-25 20:59:05 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:59:05 [INFO] session_manager: 会话已恢复
+2026-06-25 20:59:05 [INFO] main_window: 会话已恢复
+2026-06-25 20:59:09 [INFO] session_manager: 会话已保存
+2026-06-25 20:59:13 [INFO] session_manager: 会话已保存
+2026-06-25 20:59:38 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 20:59:38 [INFO] session_manager: 会话已恢复
+2026-06-25 20:59:38 [INFO] main_window: 会话已恢复
+2026-06-25 20:59:42 [INFO] session_manager: 会话已保存
+2026-06-25 21:00:22 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:00:22 [INFO] session_manager: 会话已恢复
+2026-06-25 21:00:22 [INFO] main_window: 会话已恢复
+2026-06-25 21:00:37 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 21:00:37 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 21:00:37 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 21:00:37 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 21:00:37 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
+2026-06-25 21:00:37 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
+2026-06-25 21:00:37 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
+2026-06-25 21:00:37 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
+2026-06-25 21:00:37 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000484(公开）.pdf
+2026-06-25 21:00:37 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000486(公开）.pdf
+2026-06-25 21:00:38 [INFO] session_manager: 会话已保存
+2026-06-25 21:00:50 [INFO] session_manager: 会话已保存
+2026-06-25 21:01:02 [INFO] config_manager: 配置已保存: D:/AppData/workspace/src/pdf_extractor/dist/工艺更改单.cfg
+2026-06-25 21:01:04 [INFO] session_manager: 会话已保存
+2026-06-25 21:01:07 [INFO] session_manager: 会话已保存
+2026-06-25 21:04:17 [INFO] session_manager: 会话已保存
+2026-06-25 21:05:35 [INFO] session_manager: 会话已保存
+2026-06-25 21:05:37 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:05:37 [INFO] session_manager: 会话已恢复
+2026-06-25 21:05:37 [INFO] main_window: 会话已恢复
+2026-06-25 21:05:45 [INFO] session_manager: 会话已保存
+2026-06-25 21:08:50 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:08:50 [INFO] session_manager: 会话已恢复
+2026-06-25 21:08:50 [INFO] main_window: 会话已恢复
+2026-06-25 21:10:11 [INFO] session_manager: 会话已保存
+2026-06-25 21:11:13 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:11:13 [INFO] session_manager: 会话已恢复
+2026-06-25 21:11:13 [INFO] main_window: 会话已恢复
+2026-06-25 21:11:33 [INFO] session_manager: 会话已保存
+2026-06-25 21:12:58 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:12:58 [INFO] session_manager: 会话已恢复
+2026-06-25 21:12:58 [INFO] main_window: 会话已恢复
+2026-06-25 21:13:01 [INFO] session_manager: 会话已保存
+2026-06-25 21:14:03 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:14:03 [INFO] session_manager: 会话已恢复
+2026-06-25 21:14:03 [INFO] main_window: 会话已恢复
+2026-06-25 21:15:03 [INFO] session_manager: 会话已保存
+2026-06-25 21:16:48 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:16:49 [INFO] session_manager: 会话已恢复
+2026-06-25 21:16:49 [INFO] main_window: 会话已恢复
+2026-06-25 21:16:58 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 21:16:58 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 21:16:58 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 21:16:58 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 21:16:58 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
+2026-06-25 21:16:58 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
+2026-06-25 21:16:58 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
+2026-06-25 21:16:58 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
+2026-06-25 21:16:58 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000484(公开）.pdf
+2026-06-25 21:16:58 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000486(公开）.pdf
+2026-06-25 21:16:58 [INFO] session_manager: 会话已保存
+2026-06-25 21:18:38 [INFO] session_manager: 会话已保存
+2026-06-25 21:18:38 [INFO] session_manager: 会话已保存
+2026-06-25 21:20:19 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:20:19 [INFO] session_manager: 会话已恢复
+2026-06-25 21:20:19 [INFO] main_window: 会话已恢复
+2026-06-25 21:20:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 21:20:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 21:20:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 21:20:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 21:20:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
+2026-06-25 21:20:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
+2026-06-25 21:20:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
+2026-06-25 21:20:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
+2026-06-25 21:20:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000484(公开）.pdf
+2026-06-25 21:20:30 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000486(公开）.pdf
+2026-06-25 21:20:30 [INFO] session_manager: 会话已保存
+2026-06-25 21:23:33 [INFO] session_manager: 会话已保存
+2026-06-25 21:23:34 [INFO] session_manager: 会话已保存
+2026-06-25 21:23:36 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:23:36 [INFO] session_manager: 会话已恢复
+2026-06-25 21:23:36 [INFO] main_window: 会话已恢复
+2026-06-25 21:23:44 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 21:23:44 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 21:23:44 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 21:23:44 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 21:23:44 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
+2026-06-25 21:23:45 [INFO] session_manager: 会话已保存
+2026-06-25 21:23:56 [INFO] session_manager: 会话已保存
+2026-06-25 21:23:57 [INFO] session_manager: 会话已保存
+2026-06-25 21:24:01 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:24:01 [INFO] session_manager: 会话已恢复
+2026-06-25 21:24:01 [INFO] main_window: 会话已恢复
+2026-06-25 21:24:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 21:24:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 21:24:09 [INFO] session_manager: 会话已保存
+2026-06-25 21:24:32 [INFO] session_manager: 会话已保存
+2026-06-25 21:24:33 [INFO] session_manager: 会话已保存
+2026-06-25 21:26:37 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:26:37 [INFO] session_manager: 会话已恢复
+2026-06-25 21:26:37 [INFO] main_window: 会话已恢复
+2026-06-25 21:26:45 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 21:26:45 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 21:26:46 [INFO] session_manager: 会话已保存
+2026-06-25 21:28:25 [INFO] session_manager: 会话已保存
+2026-06-25 21:28:27 [INFO] session_manager: 会话已保存
+2026-06-25 21:30:31 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:30:32 [INFO] session_manager: 会话已恢复
+2026-06-25 21:30:32 [INFO] main_window: 会话已恢复
+2026-06-25 21:30:38 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 21:30:38 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 21:30:39 [INFO] session_manager: 会话已保存
+2026-06-25 21:31:26 [INFO] session_manager: 会话已保存
+2026-06-25 21:31:27 [INFO] session_manager: 会话已保存
+2026-06-25 21:33:12 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:33:12 [INFO] session_manager: 会话已恢复
+2026-06-25 21:33:12 [INFO] main_window: 会话已恢复
+2026-06-25 21:33:22 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 21:33:22 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 21:33:23 [INFO] session_manager: 会话已保存
+2026-06-25 21:33:40 [INFO] session_manager: 会话已保存
+2026-06-25 21:33:46 [INFO] session_manager: 会话已保存
+2026-06-25 21:35:06 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:35:06 [INFO] session_manager: 会话已恢复
+2026-06-25 21:35:06 [INFO] main_window: 会话已恢复
+2026-06-25 21:35:09 [INFO] session_manager: 会话已保存
+2026-06-25 21:35:11 [INFO] session_manager: 会话已保存
+2026-06-25 21:38:44 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:38:44 [INFO] session_manager: 会话已恢复
+2026-06-25 21:38:44 [INFO] main_window: 会话已恢复
+2026-06-25 21:38:56 [INFO] session_manager: 会话已保存
+2026-06-25 21:41:08 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:41:08 [INFO] session_manager: 会话已恢复
+2026-06-25 21:41:08 [INFO] main_window: 会话已恢复
+2026-06-25 21:41:36 [INFO] session_manager: 会话已保存
+2026-06-25 21:47:33 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 21:47:33 [INFO] session_manager: 会话已恢复
+2026-06-25 21:47:33 [INFO] main_window: 会话已恢复
+2026-06-25 21:48:03 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 21:48:03 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 21:48:03 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 21:48:03 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 21:48:03 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
+2026-06-25 21:48:04 [INFO] session_manager: 会话已保存
+2026-06-25 21:48:17 [INFO] session_manager: 会话已保存
+2026-06-25 21:59:40 [INFO] session_manager: 会话已保存
+2026-06-25 22:00:28 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:00:28 [INFO] session_manager: 会话已恢复
+2026-06-25 22:00:28 [INFO] main_window: 会话已恢复
+2026-06-25 22:01:24 [INFO] session_manager: 会话已保存
+2026-06-25 22:08:58 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:08:58 [INFO] session_manager: 会话已恢复
+2026-06-25 22:08:58 [INFO] main_window: 会话已恢复
+2026-06-25 22:09:14 [INFO] session_manager: 会话已保存
+2026-06-25 22:09:26 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:09:27 [INFO] session_manager: 会话已恢复
+2026-06-25 22:09:27 [INFO] main_window: 会话已恢复
+2026-06-25 22:10:11 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:10:11 [INFO] session_manager: 会话已恢复
+2026-06-25 22:10:11 [INFO] main_window: 会话已恢复
+2026-06-25 22:10:22 [INFO] session_manager: 会话已保存
+2026-06-25 22:10:24 [INFO] session_manager: 会话已保存
+2026-06-25 22:10:25 [INFO] session_manager: 会话已保存
+2026-06-25 22:10:40 [INFO] session_manager: 会话已保存
+2026-06-25 22:10:41 [INFO] session_manager: 会话已保存
+2026-06-25 22:10:42 [INFO] session_manager: 会话已保存
+2026-06-25 22:10:53 [INFO] session_manager: 会话已保存
+2026-06-25 22:10:54 [INFO] session_manager: 会话已保存
+2026-06-25 22:10:59 [INFO] session_manager: 会话已保存
+2026-06-25 22:13:02 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:13:02 [INFO] session_manager: 会话已恢复
+2026-06-25 22:13:02 [INFO] main_window: 会话已恢复
+2026-06-25 22:13:12 [INFO] session_manager: 会话已保存
+2026-06-25 22:13:13 [INFO] session_manager: 会话已保存
+2026-06-25 22:13:26 [INFO] session_manager: 会话已保存
+2026-06-25 22:13:29 [INFO] session_manager: 会话已保存
+2026-06-25 22:13:32 [INFO] session_manager: 会话已保存
+2026-06-25 22:13:34 [INFO] session_manager: 会话已保存
+2026-06-25 22:13:37 [INFO] session_manager: 会话已保存
+2026-06-25 22:13:39 [INFO] session_manager: 会话已保存
+2026-06-25 22:13:41 [INFO] session_manager: 会话已保存
+2026-06-25 22:13:48 [INFO] session_manager: 会话已保存
+2026-06-25 22:13:50 [INFO] session_manager: 会话已保存
+2026-06-25 22:13:56 [INFO] session_manager: 会话已保存
+2026-06-25 22:14:05 [INFO] session_manager: 会话已保存
+2026-06-25 22:14:26 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:14:26 [INFO] session_manager: 会话已恢复
+2026-06-25 22:14:26 [INFO] main_window: 会话已恢复
+2026-06-25 22:15:03 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:15:03 [INFO] session_manager: 会话已恢复
+2026-06-25 22:15:03 [INFO] main_window: 会话已恢复
+2026-06-25 22:15:39 [INFO] session_manager: 会话已保存
+2026-06-25 22:15:40 [INFO] session_manager: 会话已保存
+2026-06-25 22:16:12 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:16:12 [INFO] session_manager: 会话已恢复
+2026-06-25 22:16:12 [INFO] main_window: 会话已恢复
+2026-06-25 22:16:27 [INFO] session_manager: 会话已保存
+2026-06-25 22:16:31 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 22:16:31 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 22:16:31 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 22:16:31 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 22:16:31 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
+2026-06-25 22:16:31 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
+2026-06-25 22:16:31 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
+2026-06-25 22:16:31 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
+2026-06-25 22:16:32 [INFO] session_manager: 会话已保存
+2026-06-25 22:16:47 [INFO] session_manager: 会话已保存
+2026-06-25 22:21:30 [INFO] session_manager: 会话已保存
+2026-06-25 22:21:52 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:21:52 [INFO] session_manager: 会话已恢复
+2026-06-25 22:21:52 [INFO] main_window: 会话已恢复
+2026-06-25 22:21:58 [INFO] session_manager: 会话已保存
+2026-06-25 22:22:11 [INFO] session_manager: 会话已保存
+2026-06-25 22:30:22 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:30:22 [INFO] session_manager: 会话已恢复
+2026-06-25 22:30:22 [INFO] main_window: 会话已恢复
+2026-06-25 22:30:43 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 22:30:43 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 22:30:43 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 22:30:43 [INFO] session_manager: 会话已保存
+2026-06-25 22:30:50 [INFO] session_manager: 会话已保存
+2026-06-25 22:30:59 [INFO] session_manager: 会话已保存
+2026-06-25 22:31:05 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 22:31:05 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 22:31:05 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 22:31:05 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 22:31:05 [INFO] session_manager: 会话已保存
+2026-06-25 22:31:09 [INFO] session_manager: 会话已保存
+2026-06-25 22:31:11 [INFO] session_manager: 会话已保存
+2026-06-25 22:34:17 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:34:17 [INFO] session_manager: 会话已恢复
+2026-06-25 22:34:17 [INFO] main_window: 会话已恢复
+2026-06-25 22:34:35 [INFO] session_manager: 会话已保存
+2026-06-25 22:35:36 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:35:36 [INFO] session_manager: 会话已恢复
+2026-06-25 22:35:36 [INFO] main_window: 会话已恢复
+2026-06-25 22:36:03 [INFO] session_manager: 会话已保存
+2026-06-25 22:37:33 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:37:33 [INFO] session_manager: 会话已恢复
+2026-06-25 22:37:33 [INFO] main_window: 会话已恢复
+2026-06-25 22:39:14 [INFO] session_manager: 会话已保存
+2026-06-25 22:39:53 [INFO] session_manager: 会话已保存
+2026-06-25 22:39:53 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:39:54 [INFO] session_manager: 会话已恢复
+2026-06-25 22:39:54 [INFO] main_window: 会话已恢复
+2026-06-25 22:41:36 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:41:36 [INFO] session_manager: 会话已恢复
+2026-06-25 22:41:36 [INFO] main_window: 会话已恢复
+2026-06-25 22:41:44 [INFO] session_manager: 会话已保存
+2026-06-25 22:41:45 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:41:45 [INFO] session_manager: 会话已恢复
+2026-06-25 22:41:45 [INFO] main_window: 会话已恢复
+2026-06-25 22:41:51 [INFO] session_manager: 会话已保存
+2026-06-25 22:41:52 [INFO] session_manager: 会话已保存
+2026-06-25 22:42:52 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:42:52 [INFO] session_manager: 会话已恢复
+2026-06-25 22:42:52 [INFO] main_window: 会话已恢复
+2026-06-25 22:43:25 [INFO] session_manager: 会话已保存
+2026-06-25 22:43:48 [INFO] config_manager: 配置已保存: D:/AppData/workspace/src/pdf_extractor/dist/工艺更改单.cfg
+2026-06-25 22:43:53 [INFO] session_manager: 会话已保存
+2026-06-25 22:43:56 [INFO] session_manager: 会话已保存
+2026-06-25 22:44:00 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:44:00 [INFO] session_manager: 会话已恢复
+2026-06-25 22:44:00 [INFO] main_window: 会话已恢复
+2026-06-25 22:44:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 22:44:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 22:44:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 22:44:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 22:44:08 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
+2026-06-25 22:44:08 [INFO] session_manager: 会话已保存
+2026-06-25 22:44:31 [INFO] session_manager: 会话已保存
+2026-06-25 22:45:29 [INFO] excel_generator: Excel 已生成: D:/AppData/workspace/src/pdf_extractor/PDF信息汇总表_20260625_224528.xlsx
+2026-06-25 22:45:32 [INFO] main_window: Excel 导出成功: D:/AppData/workspace/src/pdf_extractor/PDF信息汇总表_20260625_224528.xlsx
+2026-06-25 22:45:32 [INFO] session_manager: 会话已保存
+2026-06-25 22:47:10 [INFO] session_manager: 会话已保存
+2026-06-25 22:48:13 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:48:13 [INFO] session_manager: 会话已恢复
+2026-06-25 22:48:13 [INFO] main_window: 会话已恢复
+2026-06-25 22:48:21 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 22:48:21 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 22:48:21 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 22:48:21 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 22:48:22 [INFO] session_manager: 会话已保存
+2026-06-25 22:48:25 [INFO] session_manager: 会话已保存
+2026-06-25 22:48:37 [INFO] session_manager: 会话已保存
+2026-06-25 22:49:03 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:49:03 [INFO] session_manager: 会话已恢复
+2026-06-25 22:49:03 [INFO] main_window: 会话已恢复
+2026-06-25 22:49:16 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 22:49:16 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 22:49:16 [INFO] session_manager: 会话已保存
+2026-06-25 22:50:58 [INFO] session_manager: 会话已保存
+2026-06-25 22:50:58 [INFO] session_manager: 会话已保存
+2026-06-25 22:56:51 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:56:52 [INFO] session_manager: 会话已恢复
+2026-06-25 22:56:52 [INFO] main_window: 会话已恢复
+2026-06-25 22:56:59 [INFO] session_manager: 会话已保存
+2026-06-25 22:59:27 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 22:59:27 [INFO] session_manager: 会话已恢复
+2026-06-25 22:59:27 [INFO] main_window: 会话已恢复
+2026-06-25 23:00:01 [INFO] session_manager: 会话已保存
+2026-06-25 23:00:02 [INFO] session_manager: 会话已保存
+2026-06-25 23:02:15 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 23:02:15 [INFO] session_manager: 会话已恢复
+2026-06-25 23:02:15 [INFO] main_window: 会话已恢复
+2026-06-25 23:02:24 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 23:02:24 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 23:02:25 [INFO] session_manager: 会话已保存
+2026-06-25 23:02:40 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 23:02:40 [INFO] session_manager: 会话已恢复
+2026-06-25 23:02:40 [INFO] main_window: 会话已恢复
+2026-06-25 23:03:19 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 23:03:20 [INFO] session_manager: 会话已恢复
+2026-06-25 23:03:20 [INFO] main_window: 会话已恢复
+2026-06-25 23:03:50 [INFO] session_manager: 会话已保存
+2026-06-25 23:04:00 [INFO] session_manager: 会话已保存
+2026-06-25 23:08:16 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 23:08:16 [INFO] session_manager: 会话已恢复
+2026-06-25 23:08:17 [INFO] main_window: 会话已恢复
+2026-06-25 23:08:20 [INFO] session_manager: 会话已保存
+2026-06-25 23:08:22 [INFO] session_manager: 会话已保存
+2026-06-25 23:10:59 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 23:10:59 [INFO] session_manager: 会话已恢复
+2026-06-25 23:10:59 [INFO] main_window: 会话已恢复
+2026-06-25 23:12:54 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 23:12:54 [INFO] session_manager: 会话已恢复
+2026-06-25 23:12:54 [INFO] main_window: 会话已恢复
+2026-06-25 23:12:54 [INFO] session_manager: 会话已保存
+2026-06-25 23:13:14 [INFO] session_manager: 会话已保存
+2026-06-25 23:13:26 [INFO] session_manager: 会话已保存
+2026-06-25 23:13:42 [INFO] session_manager: 会话已保存
+2026-06-25 23:13:51 [INFO] session_manager: 会话已保存
+2026-06-25 23:13:56 [INFO] session_manager: 会话已保存
+2026-06-25 23:14:02 [INFO] session_manager: 会话已保存
+2026-06-25 23:16:48 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 23:16:48 [INFO] session_manager: 会话已恢复
+2026-06-25 23:16:48 [INFO] main_window: 会话已恢复
+2026-06-25 23:16:49 [INFO] session_manager: 会话已保存
+2026-06-25 23:17:17 [INFO] session_manager: 会话已保存
+2026-06-25 23:17:25 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 23:17:25 [INFO] session_manager: 会话已恢复
+2026-06-25 23:17:25 [INFO] main_window: 会话已恢复
+2026-06-25 23:17:26 [INFO] session_manager: 会话已保存
+2026-06-25 23:18:43 [INFO] session_manager: 会话已保存
+2026-06-25 23:18:55 [INFO] session_manager: 会话已保存
+2026-06-25 23:20:26 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 23:20:27 [INFO] session_manager: 会话已恢复
+2026-06-25 23:20:27 [INFO] main_window: 会话已恢复
+2026-06-25 23:20:27 [INFO] session_manager: 会话已保存
+2026-06-25 23:23:22 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 23:23:23 [INFO] session_manager: 会话已恢复
+2026-06-25 23:23:23 [INFO] main_window: 会话已恢复
+2026-06-25 23:23:23 [INFO] session_manager: 会话已保存
+2026-06-25 23:23:34 [INFO] session_manager: 会话已保存
+2026-06-25 23:23:44 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 23:23:44 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 23:23:44 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 23:23:44 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 23:23:44 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
+2026-06-25 23:23:44 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
+2026-06-25 23:23:44 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
+2026-06-25 23:23:44 [INFO] session_manager: 会话已保存
+2026-06-25 23:24:15 [INFO] session_manager: 会话已保存
+2026-06-25 23:24:22 [INFO] session_manager: 会话已保存
+2026-06-25 23:24:24 [INFO] session_manager: 会话已保存
+2026-06-25 23:27:58 [INFO] config_manager: 配置已加载: d:\AppData\workspace\src\pdf_extractor\default.cfg
+2026-06-25 23:27:58 [INFO] session_manager: 会话已恢复
+2026-06-25 23:27:58 [INFO] main_window: 会话已恢复
+2026-06-25 23:27:58 [INFO] session_manager: 会话已保存
+2026-06-25 23:28:13 [INFO] session_manager: 会话已保存

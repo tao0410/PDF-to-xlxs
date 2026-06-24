@@ -6,14 +6,14 @@ import os
 import re
 from typing import List, Optional
 
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import QEvent, Qt, QTimer
 from PyQt5.QtGui import QColor, QImage, QPainter, QPen, QPixmap, QKeySequence
 from PyQt5.QtWidgets import (
     QComboBox, QDialog, QFileDialog, QFrame, QGroupBox,
     QHBoxLayout, QHeaderView, QLabel, QLineEdit,
     QMessageBox, QPushButton, QScrollArea, QShortcut,
-    QSizePolicy, QSpinBox, QTableWidget, QTableWidgetItem,
-    QVBoxLayout, QWidget,
+    QSizePolicy, QSpinBox, QSplitter, QTableWidget,
+    QTableWidgetItem, QVBoxLayout, QWidget,
 )
 
 from config_manager import DATA_TYPES, ANCHOR_DIRECTIONS, ConfigManager
@@ -84,11 +84,12 @@ class PdfPreviewWidget(QWidget):
         lo.addLayout(hdr)
 
         self.scroll = QScrollArea()
-        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidgetResizable(False)
         self.scroll.setAlignment(Qt.AlignCenter)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.pic = QLabel(alignment=Qt.AlignCenter)
-        self.pic.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.pic.setMinimumHeight(280)
+        self.pic.setMinimumSize(200, 200)
         self.scroll.setWidget(self.pic)
         lo.addWidget(self.scroll, 1)
 
@@ -120,6 +121,8 @@ class PdfPreviewWidget(QWidget):
         self._update_nav()
 
     def _show_placeholder(self):
+        self.pic.setMinimumSize(200, 200)
+        self.pic.setMaximumSize(16777215, 16777215)  # QWIDGETSIZE_MAX
         self.pic.setText("点击「打开PDF」加载文件")
         self.pic.setObjectName("preview-placeholder")
         self.pic.style().unpolish(self.pic)
@@ -241,7 +244,7 @@ class PdfPreviewWidget(QWidget):
                 # 坐标框选高亮（coordinate 模式）
                 if self._hl_bbox:
                     pen = QPen()
-                    pen.setColor(self._hl_color[0], self._hl_color[1], self._hl_color[2])
+                    pen.setColor(QColor(*self._hl_color))
                     pen.setWidth(2)
                     painter.setPen(pen)
                     painter.setBrush(Qt.NoBrush)
@@ -253,6 +256,7 @@ class PdfPreviewWidget(QWidget):
                 painter.end()
 
             self.pic.setPixmap(pm)
+            self.pic.setFixedSize(pm.size())
             self.pic.setObjectName("")
             self.pic.setStyleSheet(
                 "QLabel { background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0; }")
@@ -271,8 +275,8 @@ class ConfigDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("配置提取规则")
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint)
-        self.resize(1100, 620)
-        self.setMinimumSize(900, 520)
+        self.resize(1100, 720)
+        self.setMinimumSize(900, 600)
         self.config = dict(config)
         self.config_path = config_path
         self._pp = pending_paths or []
@@ -318,87 +322,73 @@ class ConfigDialog(QDialog):
         top.addStretch()
         ml.addLayout(top)
 
-        # ── Three columns ──
-        body = QHBoxLayout()
-        body.setSpacing(12)
+        # ── Left column / Right preview (QSplitter) ──
+        splitter = QSplitter(Qt.Horizontal)
+        splitter.setHandleWidth(4)
 
-        # LEFT
-        left = QFrame(objectName="card")
-        left.setMinimumWidth(280)
-        left.setMaximumWidth(380)
-        ll = QVBoxLayout(left)
-        ll.setContentsMargins(16, 16, 16, 16)
-        ll.setSpacing(8)
+        # LEFT COLUMN
+        lc = QVBoxLayout()
+        lc.setSpacing(6)
+
+        # ── Rule table card ──
+        rule_card = QFrame(objectName="card")
+        rule_card.setMinimumWidth(500)
+        rcl = QVBoxLayout(rule_card)
+        rcl.setContentsMargins(1, 6, 1, 6)
+        rcl.setSpacing(8)
 
         self.rule_table = QTableWidget()
         self.rule_table.setColumnCount(len(LIST_COLUMNS))
         self.rule_table.setHorizontalHeaderLabels(LIST_COLUMNS)
-        self.rule_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.rule_table.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.rule_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.rule_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.rule_table.setSelectionMode(QTableWidget.ExtendedSelection)
         self.rule_table.verticalHeader().setVisible(False)
-        ll.addWidget(self.rule_table)
+        self._col_ratios = [120, 160, 100, 120]
+        self._col_total = sum(self._col_ratios)
+        self.rule_table.installEventFilter(self)
+        rcl.addWidget(self.rule_table)
 
-        lb = QHBoxLayout()
+        rb = QHBoxLayout()
         self.btn_sel_all = QPushButton("全选")
         self.btn_del = QPushButton("删除选中")
         self.btn_del.setObjectName("btn-ghost")
         self.btn_add = QPushButton("添加行")
         for b in (self.btn_sel_all, self.btn_del, self.btn_add):
             b.setObjectName("btn-small")
-        lb.addWidget(self.btn_sel_all)
-        lb.addWidget(self.btn_del)
-        lb.addWidget(self.btn_add)
-        lb.addStretch()
-        ll.addLayout(lb)
-        body.addWidget(left)
+        rb.addWidget(self.btn_sel_all)
+        rb.addWidget(self.btn_del)
+        rb.addWidget(self.btn_add)
+        rb.addStretch()
+        rcl.addLayout(rb)
+        lc.addWidget(rule_card, 1)
 
-        # MIDDLE
-        mid = QFrame(objectName="card")
-        mid.setMinimumWidth(280)
-        mid.setMaximumWidth(360)
-        mml = QVBoxLayout(mid)
-        mml.setContentsMargins(20, 20, 20, 20)
-        mml.setSpacing(12)
+        # ── Mode params (plain wrapper, GroupBox provides the card styling) ──
+        params_wrap = QWidget()
+        pw_layout = QVBoxLayout(params_wrap)
+        pw_layout.setContentsMargins(0, 0, 0, 0)
+        pw_layout.setSpacing(4)
 
-        mh = QHBoxLayout()
-        mh.addWidget(QLabel("坐标参数", objectName="section-title"))
-        mh.addStretch()
-        self.lbl_mode = QLabel(objectName="hint-text")
-        mh.addWidget(self.lbl_mode)
-        mml.addLayout(mh)
-
-        # Common fields
-        for lbl_text, widget in [
-            ("区域名称", "edt_rname"), ("页面范围", "edt_page"), ("数据类型", "cmb_dtype"),
-        ]:
-            row = QHBoxLayout()
-            row.addWidget(QLabel(lbl_text + ":"))
-            row.addStretch()
-            mml.addLayout(row)
-        self.edt_rname = QLineEdit()
-        self.edt_page = QLineEdit()
-        self.edt_page.setPlaceholderText("如：第1页 / 第1-3页 / 所有页")
-        self.cmb_dtype = QComboBox()
-        self.cmb_dtype.addItems(list(DATA_TYPES))
-        mml.addWidget(self.edt_rname)
-        mml.addWidget(self.edt_page)
-        mml.addWidget(self.cmb_dtype)
-
-        # Mode-specific panels
         self.grp_coord = self._mk_coord()
         self.grp_anchor = self._mk_anchor()
         self.grp_tbl = self._mk_tbl()
-        mml.addWidget(self.grp_coord)
-        mml.addWidget(self.grp_anchor)
-        mml.addWidget(self.grp_tbl)
-        mml.addStretch()
-        body.addWidget(mid)
+        pw_layout.addWidget(self.grp_coord)
+        pw_layout.addWidget(self.grp_anchor)
+        pw_layout.addWidget(self.grp_tbl)
+        lc.addWidget(params_wrap, 0)
 
-        # RIGHT
+        left_widget = QWidget()
+        left_widget.setMinimumWidth(480)
+        left_widget.setLayout(lc)
+
         self._pw = PdfPreviewWidget()
-        body.addWidget(self._pw, 1)
-        ml.addLayout(body, 1)
+        splitter.addWidget(left_widget)
+        splitter.addWidget(self._pw)
+        splitter.setStretchFactor(0, 0)
+        splitter.setStretchFactor(1, 1)
+        splitter.setSizes([520, 800])
+        ml.addWidget(splitter, 1)
 
         # ── Bottom bar ──
         bar = QFrame(objectName="toolbar")
@@ -443,6 +433,14 @@ class ConfigDialog(QDialog):
         self.kw_text.textChanged.connect(self._update_preview)
         self.tc_hdr.textChanged.connect(self._update_preview)
 
+    def eventFilter(self, obj, event):
+        if obj is self.rule_table and event.type() == QEvent.Resize:
+            w = self.rule_table.viewport().width()
+            if w > 0:
+                for i, r in enumerate(self._col_ratios):
+                    self.rule_table.setColumnWidth(i, max(20, int(w * r / self._col_total)))
+        return super().eventFilter(obj, event)
+
     def _setup_shortcuts(self):
         QShortcut(QKeySequence("Ctrl+S"), self, self._save)
         QShortcut(QKeySequence.Delete, self, self._del_rules)
@@ -452,14 +450,15 @@ class ConfigDialog(QDialog):
     def _mk_coord(self):
         g = QGroupBox("坐标提取参数")
         lo = QVBoxLayout(g)
-        for a, b in [("左上角 X:", "sp_x1"), ("左上角 Y:", "sp_y1"),
-                      ("右下角 X:", "sp_x2"), ("右下角 Y:", "sp_y2")]:
+        for row_labels in [("X1:", "sp_x1", "Y1:", "sp_y1"),
+                            ("X2:", "sp_x2", "Y2:", "sp_y2")]:
             r = QHBoxLayout()
-            r.addWidget(QLabel(a))
-            sp = QSpinBox()
-            sp.setRange(0, 9999)
-            setattr(self, b, sp)
-            r.addWidget(sp)
+            for label, attr in [(row_labels[0], row_labels[1]), (row_labels[2], row_labels[3])]:
+                r.addWidget(QLabel(label))
+                sp = QSpinBox()
+                sp.setRange(0, 9999)
+                setattr(self, attr, sp)
+                r.addWidget(sp)
             lo.addLayout(r)
         return g
 
@@ -511,15 +510,21 @@ class ConfigDialog(QDialog):
         self.rule_table.setRowCount(len(self.rules))
         for i, rule in enumerate(self.rules):
             mode_map = {"coordinate": "坐标提取", "anchor": "锚点提取", "table_column": "表格列提取"}
-            self.rule_table.setItem(i, 0, QTableWidgetItem(rule.get("name", "")))
+            ni = QTableWidgetItem(rule.get("name", ""))
+            ni.setTextAlignment(Qt.AlignCenter)
+            self.rule_table.setItem(i, 0, ni)
             mc = QComboBox()
+            mc.setStyleSheet("QComboBox{padding:0 6px;min-height:24px;}")
             mc.addItems(["坐标提取", "锚点提取", "表格列提取"])
             mi = {"coordinate": 0, "anchor": 1, "table_column": 2}.get(rule.get("mode", "coordinate"), 0)
             mc.setCurrentIndex(mi)
             mc.currentIndexChanged.connect(lambda idx, r=i: self._mode_changed(r, idx))
             self.rule_table.setCellWidget(i, 1, mc)
-            self.rule_table.setItem(i, 2, QTableWidgetItem(rule.get("page_range", "第1页")))
+            pi = QTableWidgetItem(rule.get("page_range", "第1页"))
+            pi.setTextAlignment(Qt.AlignCenter)
+            self.rule_table.setItem(i, 2, pi)
             dc = QComboBox()
+            dc.setStyleSheet("QComboBox{padding:0 6px;min-height:24px;}")
             dc.addItems(list(DATA_TYPES))
             dc.setCurrentText(rule.get("data_type", "文本"))
             self.rule_table.setCellWidget(i, 3, dc)
@@ -549,11 +554,6 @@ class ConfigDialog(QDialog):
         self.grp_coord.setVisible(mode == "coordinate")
         self.grp_anchor.setVisible(mode == "anchor")
         self.grp_tbl.setVisible(mode == "table_column")
-        self.lbl_mode.setText(f"模式: {mode}")
-
-        self.edt_rname.setText(rule.get("name", ""))
-        self.edt_page.setText(rule.get("page_range", "第1页"))
-        self.cmb_dtype.setCurrentText(rule.get("data_type", "文本"))
 
         if mode == "coordinate":
             self.sp_x1.setValue(int(rule.get("x1", 0)))
@@ -583,7 +583,8 @@ class ConfigDialog(QDialog):
                     self.sp_x2.value(), self.sp_y2.value())
             self._pw.set_keywords([])
             if bbox[2] > bbox[0] and bbox[3] > bbox[1]:
-                self._pw.set_hl(bbox, color, self.edt_rname.text() or "")
+                rn = self.rule_table.item(row, 0)
+                self._pw.set_hl(bbox, color, rn.text() if rn else "")
             else:
                 self._pw.set_hl(None)
         elif mode == "anchor":
@@ -592,7 +593,8 @@ class ConfigDialog(QDialog):
         elif mode == "table_column":
             self._pw.set_hl(None)
             self._pw.set_keywords([self.tc_hdr.text()])
-        pr = self.edt_page.text() or "第1页"
+        pi = self.rule_table.item(row, 2)
+        pr = pi.text() if pi else "第1页"
         nums = re.findall(r'\d+', pr)
         if nums:
             self._pw.go_page(int(nums[0]))
@@ -624,14 +626,12 @@ class ConfigDialog(QDialog):
             return
         rule = self.rules[row]
         mode = rule.get("mode", "coordinate")
-        rule["name"] = self.edt_rname.text().strip() or rule.get("name", "")
-        rule["page_range"] = self.edt_page.text() or "第1页"
-        rule["data_type"] = self.cmb_dtype.currentText()
-        # Sync to table
-        if self.rule_table.item(row, 0):
-            self.rule_table.item(row, 0).setText(rule["name"])
-        if self.rule_table.item(row, 2):
-            self.rule_table.item(row, 2).setText(rule["page_range"])
+        rule["name"] = (self.rule_table.item(row, 0).text().strip()
+                        if self.rule_table.item(row, 0) else rule.get("name", ""))
+        rule["page_range"] = (self.rule_table.item(row, 2).text() or "第1页"
+                              if self.rule_table.item(row, 2) else "第1页")
+        dc = self.rule_table.cellWidget(row, 3)
+        rule["data_type"] = dc.currentText() if dc else rule.get("data_type", "文本")
 
         if mode == "coordinate":
             rule["x1"] = self.sp_x1.value()
@@ -759,11 +759,10 @@ class ConfigDialog(QDialog):
                 self.sp_y1.setValue(y1)
                 self.sp_x2.setValue(x2)
                 self.sp_y2.setValue(y2)
-                self._save_params()
                 ps = f"第{page}页"
-                self.edt_page.setText(ps)
                 if self.rule_table.item(row, 2):
                     self.rule_table.item(row, 2).setText(ps)
+                self._save_params()
                 self._update_preview()
             self._preview_dlg.coordinates_confirmed.connect(cb)
 

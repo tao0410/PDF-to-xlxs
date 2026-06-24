@@ -1,47 +1,28 @@
-2026-06-22 01:36:42 [INFO] session_manager: 会话已保存
-2026-06-22 22:22:57 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\dist\default.cfg
-2026-06-22 22:22:57 [INFO] session_manager: 会话已恢复
-2026-06-22 22:22:57 [INFO] main_window: 会话已恢复
-2026-06-22 22:22:59 [INFO] config_manager: 配置已加载: D:\AppData\workspace\src\pdf_extractor\dist\default.cfg
-2026-06-22 22:22:59 [INFO] session_manager: 会话已恢复
-2026-06-22 22:22:59 [INFO] main_window: 会话已恢复
-2026-06-22 22:23:04 [INFO] session_manager: 会话已保存
-2026-06-22 22:24:45 [INFO] session_manager: 会话已保存
-2026-06-22 22:24:55 [INFO] session_manager: 会话已保存
-2026-06-22 22:33:20 [INFO] session_manager: 会话已保存
-2026-06-22 22:33:25 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
-2026-06-22 22:33:25 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
-2026-06-22 22:33:25 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
-2026-06-22 22:33:25 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
-2026-06-22 22:33:25 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
-2026-06-22 22:33:25 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
-2026-06-22 22:33:25 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
-2026-06-22 22:33:25 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
-2026-06-22 22:33:25 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000484(公开）.pdf
-2026-06-22 22:33:25 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000486(公开）.pdf
-2026-06-22 22:33:25 [INFO] session_manager: 会话已保存
-2026-06-22 22:33:32 [INFO] session_manager: 会话已保存
-2026-06-22 22:41:17 [INFO] session_manager: 会话已保存
-2026-06-22 22:41:46 [INFO] session_manager: 会话已保存
-2026-06-22 22:44:11 [INFO] session_manager: 会话已保存
-2026-06-22 22:44:15 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
-2026-06-22 22:44:15 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
-2026-06-22 22:44:15 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
-2026-06-22 22:44:15 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
-2026-06-22 22:44:15 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
-2026-06-22 22:44:15 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
-2026-06-22 22:44:15 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
-2026-06-22 22:44:15 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
-2026-06-22 22:44:15 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000484(公开）.pdf
-2026-06-22 22:44:15 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000486(公开）.pdf
-2026-06-22 22:44:16 [INFO] session_manager: 会话已保存
-2026-06-22 22:48:45 [INFO] session_manager: 会话已保存
-2026-06-22 22:49:07 [INFO] session_manager: 会话已保存
-2026-06-22 22:53:54 [INFO] session_manager: 会话已保存
-2026-06-22 23:03:46 [INFO] config_manager: 配置已保存: D:\AppData\workspace\src\pdf_extractor\dist\default.cfg
-2026-06-22 23:03:48 [INFO] session_manager: 会话已保存
-2026-06-22 23:04:35 [INFO] config_manager: 配置已保存: D:\AppData\workspace\src\pdf_extractor\dist\default.cfg
-2026-06-22 23:06:05 [INFO] config_manager: 配置已保存: D:/AppData/workspace/src/pdf_extractor/dist/工艺更改单.cfg
-2026-06-22 23:06:07 [INFO] session_manager: 会话已保存
-2026-06-22 23:06:12 [INFO] config_manager: 配置已加载: D:/AppData/workspace/src/pdf_extractor/dist/工艺更改单.cfg
-2026-06-22 23:06:13 [INFO] session_manager: 会话已保存
+2026-06-25 02:01:30 [INFO] config_manager: 配置已加载: C:\Users\Administrator\AppData\Local\Temp\_MEI231322\default.cfg
+2026-06-25 02:01:38 [INFO] config_manager: 配置已加载: D:/AppData/workspace/src/pdf_extractor/dist/工艺更改单.cfg
+2026-06-25 02:02:08 [INFO] session_manager: 会话已保存
+2026-06-25 02:02:18 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 02:02:18 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 02:02:18 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 02:02:18 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 02:02:18 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000383（公开）.pdf
+2026-06-25 02:02:18 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000422（公开）.pdf
+2026-06-25 02:02:18 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000423（公开）.pdf
+2026-06-25 02:02:18 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000483（公开）.pdf
+2026-06-25 02:02:18 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000484(公开）.pdf
+2026-06-25 02:02:18 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000486(公开）.pdf
+2026-06-25 02:02:19 [INFO] session_manager: 会话已保存
+2026-06-25 02:02:34 [INFO] session_manager: 会话已保存
+2026-06-25 02:02:40 [INFO] session_manager: 会话已保存
+2026-06-25 21:44:22 [INFO] config_manager: 配置已加载: C:\Users\Administrator\AppData\Local\Temp\_MEI65962\default.cfg
+2026-06-25 21:44:23 [INFO] session_manager: 会话已恢复
+2026-06-25 21:44:23 [INFO] main_window: 会话已恢复
+2026-06-25 21:44:51 [INFO] config_manager: 配置已保存: D:/AppData/workspace/src/pdf_extractor/dist/工艺更改单.cfg
+2026-06-25 21:44:54 [INFO] session_manager: 会话已保存
+2026-06-25 21:45:05 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000155（公开）.pdf
+2026-06-25 21:45:05 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000169（公开）.pdf
+2026-06-25 21:45:05 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000194（公开）.pdf
+2026-06-25 21:45:05 [INFO] main_window: 添加文件: D:\文件\公司AI学习\工艺更改单输出测试用公开\工艺更改单输出测试用（公开）\15-ECO-GY-000246（公开）.pdf
+2026-06-25 21:45:05 [INFO] session_manager: 会话已保存
+2026-06-25 21:45:26 [INFO] session_manager: 会话已保存
+2026-06-25 21:46:01 [INFO] session_manager: 会话已保存

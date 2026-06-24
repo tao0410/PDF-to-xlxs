@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>配置提取规则 — V4 布局原型（左上下 / 右预览）</title>
+<style>
+/* ═══════════ Design Tokens ═══════════ */
+:root {
+  --primary: #15803D;
+  --primary-hover: #16A34A;
+  --primary-pressed: #166534;
+  --primary-light: #DCFCE7;
+  --primary-lighter: #F0FDF4;
+  --danger: #DC2626;
+  --bg-page: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --bg-sidebar: #F9FAFB;
+  --text-primary: #0F172A;
+  --text-body: #334155;
+  --text-secondary: #64748B;
+  --text-placeholder: #94A3B8;
+  --border-default: #E2E8F0;
+  --border-light: #F1F5F9;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+  --sz-titlebar: 52px;
+  --sz-input: 36px;
+  --shadow-card: 0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Microsoft YaHei","微软雅黑","Segoe UI",sans-serif;
+  background: #E2E8F0; color: var(--text-body); font-size: 14px;
+  display: flex; justify-content: center; padding: 40px 20px;
+}
+
+/* ═══════════ Window Frame ═══════════ */
+.window {
+  width: 1100px; background: var(--bg-card);
+  border: 1px solid var(--border-default); border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0,0,0,.08); overflow: hidden;
+}
+.titlebar {
+  height: var(--sz-titlebar); background: #fff;
+  border-bottom: 1px solid var(--border-light);
+  display: flex; align-items: center; padding: 0 20px;
+}
+.titlebar .dots { display: flex; gap: 8px; margin-right: 16px; }
+.titlebar .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--border-default); }
+.titlebar .title { font-size: 14px; font-weight: 600; color: var(--text-primary); flex: 1; }
+.titlebar .win-btn { width: 36px; height: 36px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center; color: var(--text-secondary);
+  font-size: 13px; cursor: pointer; }
+.titlebar .win-btn:hover { background: var(--bg-page); }
+
+/* ═══════════ Content Area ═══════════ */
+.content {
+  display: grid; grid-template-columns: 440px 1fr;
+  grid-template-rows: 1fr auto;
+  gap: 12px; padding: 16px;
+  min-height: 440px;
+}
+
+/* ─── Left column (top-bottom) ─── */
+.left-col {
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+/* Card base */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border-default);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-card);
+  padding: 16px; display: flex; flex-direction: column;
+}
+.card-title {
+  font-size: 14px; font-weight: 600; color: var(--text-primary);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+
+/* ─── Rule table ─── */
+.rule-config {
+  flex: 1; overflow: hidden;
+}
+.tbl-wrapper {
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+  overflow: hidden; flex: 1;
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  background: var(--primary); color: #fff; font-weight: 700;
+  padding: 10px 10px; text-align: center; font-size: 12px;
+  border-bottom: 1px solid var(--primary-pressed);
+}
+thead th:first-child { text-align: left; padding-left: 14px; }
+tbody td {
+  padding: 8px 10px; text-align: center;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-body);
+}
+tbody td:first-child { text-align: left; padding-left: 14px; }
+tbody tr:hover { background: var(--bg-page); }
+tbody tr.selected { background: var(--primary-light); }
+tbody tr.selected td:first-child { color: var(--primary); font-weight: 600; }
+.tag-mode {
+  display: inline-block; padding: 2px 8px; border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 500;
+  background: var(--primary-lighter); color: var(--primary);
+}
+
+.tbl-actions {
+  display: flex; gap: 8px; margin-top: 8px;
+}
+
+/* ─── Params card ─── */
+.params-card {
+  flex-shrink: 0;
+}
+.form-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.form-row:last-child { margin-bottom: 0; }
+.form-label { font-size: 13px; font-weight: 500; color: var(--text-body); white-space: nowrap; }
+.form-input, .form-select {
+  height: var(--sz-input); border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm); padding: 0 14px;
+  font-size: 13px; color: var(--text-body); background: #fff; outline: none;
+  font-family: inherit;
+}
+.form-input:focus, .form-select:focus { border-color: var(--primary); }
+.form-input { flex: 1; }
+.form-select { min-width: 90px; cursor: pointer; appearance: none;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M3 5h6L6 8z' fill='%2364748B'/%3E%3C/svg%3E") no-repeat right 10px center;
+  padding-right: 28px; }
+.spin { width: 80px; text-align: center; }
+
+/* ─── Right: PDF Preview ─── */
+.preview-card {
+  grid-column: 2; grid-row: 1;
+}
+.preview-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.preview-header .pg-label { font-size: 13px; color: var(--text-secondary); margin-left: auto; }
+.preview-area {
+  flex: 1; background: var(--bg-page);
+  border: 2px dashed var(--border-default); border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 280px; position: relative; overflow: hidden;
+}
+.preview-placeholder { text-align: center; color: var(--text-placeholder); font-size: 13px; }
+.preview-placeholder .icon { font-size: 48px; margin-bottom: 8px; }
+
+/* Highlight mock */
+.hl-box {
+  position: absolute; border: 2px dashed var(--primary);
+  background: rgba(21,128,61,.08); border-radius: 4px;
+  pointer-events: none;
+}
+.hl-label {
+  position: absolute; font-size: 10px; color: var(--primary); font-weight: 600;
+  pointer-events: none; white-space: nowrap;
+}
+
+.preview-nav {
+  display: flex; align-items: center; gap: 8px; margin-top: 10px;
+}
+
+/* ═══════════ Buttons ═══════════ */
+.btn { font-family: inherit; font-size: 13px; font-weight: 600;
+  padding: 8px 16px; border-radius: var(--radius-sm); cursor: pointer;
+  border: none; display: inline-flex; align-items: center; gap: 4px; }
+.btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-secondary { background: #fff; color: var(--text-body); border: 1px solid var(--border-default); font-weight: 500; }
+.btn-secondary:hover { background: var(--bg-page); border-color: #CBD5E1; }
+.btn-ghost { background: transparent; color: var(--text-secondary); font-weight: 500; }
+.btn-ghost:hover { background: var(--bg-page); }
+.btn-small { font-size: 12px; padding: 5px 12px; }
+
+/* ═══════════ Bottom bar ═══════════ */
+.bottom-bar {
+  grid-column: 1 / -1; grid-row: 2;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--border-light);
+}
+.bottom-bar .left { flex: 1; }
+.bottom-bar .right { display: flex; gap: 8px; }
+.saved-hint { font-size: 12px; color: var(--primary); font-weight: 500; opacity: .8; }
+
+/* ═══════════ Section label ═══════════ */
+.section-tag {
+  display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 1px;
+  color: var(--primary); text-transform: uppercase;
+  background: var(--primary-lighter); padding: 2px 8px; border-radius: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="window">
+
+  <!-- Title bar -->
+  <div class="titlebar">
+    <div class="dots">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+    <span class="title">配置提取规则</span>
+    <div class="win-btn" title="最小化">&#x2014;</div>
+    <div class="win-btn" title="最大化">&#x25A1;</div>
+    <div class="win-btn" title="关闭">&#x2715;</div>
+  </div>
+
+  <!-- Content: left (top-bottom) / right (preview) -->
+  <div class="content">
+
+    <!-- ═══ LEFT COLUMN ═══ -->
+    <div class="left-col">
+
+      <!-- ── Rule Config Card ── -->
+      <div class="card rule-config">
+        <div class="card-title">
+          <span class="section-tag">V4</span>
+          提取规则
+          <span style="font-weight:400;font-size:12px;color:var(--text-secondary);margin-left:auto;">共 4 条</span>
+        </div>
+        <div class="tbl-wrapper">
+          <table>
+            <thead>
+              <tr><th style="width:10px;">#</th><th>字段</th><th style="width:70px;">模式</th><th style="width:70px;">范围</th><th style="width:65px;">类型</th></tr>
+            </thead>
+            <tbody>
+              <tr class="selected" data-mode="anchor" data-name="更改单编号" data-kw="编号：">
+                <td>1</td><td>更改单编号</td><td><span class="tag-mode">锚点</span></td><td>第1页</td><td>文本</td>
+              </tr>
+              <tr data-mode="table_column" data-name="工艺规程编号" data-kw="更改对象编号">
+                <td>2</td><td>工艺规程编号</td><td><span class="tag-mode">表格列</span></td><td>第1页</td><td>文本</td>
+              </tr>
+              <tr data-mode="table_column" data-name="更改内容" data-kw="更改内容">
+                <td>3</td><td>更改内容</td><td><span class="tag-mode">表格列</span></td><td>第1页</td><td>文本</td>
+              </tr>
+              <tr data-mode="table_column" data-name="更改性质" data-kw="更改性质">
+                <td>4</td><td>更改性质</td><td><span class="tag-mode">表格列</span></td><td>第1页</td><td>文本</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-actions">
+          <button class="btn btn-small btn-secondary">添加</button>
+          <button class="btn btn-small btn-ghost">删除选中</button>
+          <button class="btn btn-small btn-ghost" style="margin-left:auto;">全选</button>
+        </div>
+      </div>
+
+      <!-- ── Params Card (switches per mode) ── -->
+      <div class="card params-card">
+        <div class="card-title">
+          <span id="param-title">关键词匹配参数</span>
+          <span id="mode-badge" class="tag-mode" style="margin-left:auto;">锚点提取</span>
+        </div>
+
+        <!-- coordinate group -->
+        <div class="param-group" id="grp-coord" style="display:none;">
+          <div class="form-row">
+            <span class="form-label">X1</span><input class="form-input spin" value="0">
+            <span class="form-label">Y1</span><input class="form-input spin" value="0">
+          </div>
+          <div class="form-row">
+            <span class="form-label">X2</span><input class="form-input spin" value="0">
+            <span class="form-label">Y2</span><input class="form-input spin" value="0">
+          </div>
+        </div>
+
+        <!-- anchor group -->
+        <div class="param-group" id="grp-anchor">
+          <div class="form-row">
+            <span class="form-label">关键词</span>
+            <input class="form-input" id="kw-text" value="编号：" placeholder="如：编号">
+          </div>
+          <div class="form-row">
+            <span class="form-label">方向</span>
+            <select class="form-select"><option>右侧</option><option>下方</option><option>左侧</option><option>上方</option></select>
+            <span class="form-label">范围</span>
+            <input class="form-input spin" value="200" style="width:70px;">
+            <span style="font-size:12px;color:var(--text-secondary);">px</span>
+          </div>
+        </div>
+
+        <!-- table_column group -->
+        <div class="param-group" id="grp-tbl" style="display:none;">
+          <div class="form-row">
+            <span class="form-label">表头关键词</span>
+            <input class="form-input" id="tchdr-text" placeholder="如：更改对象编号">
+          </div>
+          <div class="form-row">
+            <span class="form-label">行号</span>
+            <input class="form-input spin" value="2" style="width:80px;">
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /left-col -->
+
+    <!-- ═══ RIGHT: PDF Preview ═══ -->
+    <div class="card preview-card">
+      <div class="preview-header">
+        <button class="btn btn-small btn-secondary">&#x1F4C2; 打开PDF</button>
+        <button class="btn btn-small btn-secondary">&#x2197; 弹出</button>
+        <span class="pg-label">第 1 / 5 页</span>
+      </div>
+      <div class="preview-area">
+        <div class="preview-placeholder" style="position:relative;">
+          <div class="icon">&#x1F4C4;</div>
+          <div>点击「打开PDF」加载文件并预览高亮</div>
+          <!-- Mock keyword highlight box -->
+          <div class="hl-box" style="left:120px; top:60px; width:180px; height:40px;"></div>
+          <div class="hl-label" style="left:124px; top:44px;">编号： → "TZY15-ECO-GY-000483"</div>
+        </div>
+      </div>
+      <div class="preview-nav">
+        <button class="btn btn-small btn-ghost">&#x25C0; 上一页</button>
+        <button class="btn btn-small btn-ghost">下一页 &#x25B6;</button>
+        <span style="flex:1;"></span>
+        <button class="btn btn-small btn-ghost">适应窗口</button>
+        <button class="btn btn-small btn-ghost">实际大小</button>
+      </div>
+    </div>
+
+    <!-- ═══ Bottom Bar ═══ -->
+    <div class="bottom-bar">
+      <div class="left">
+        <button class="btn btn-small btn-secondary">加载配置</button>
+        <span class="saved-hint" style="margin-left:12px;">&#x2713; 已保存到 default.cfg</span>
+      </div>
+      <div class="right">
+        <button class="btn btn-small btn-secondary">保存</button>
+        <button class="btn btn-small btn-ghost">另存为</button>
+        <button class="btn btn-small btn-ghost">关闭</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /window -->
+
+<script>
+(function(){
+  var rows = document.querySelectorAll('tbody tr');
+  var groups = {
+    coordinate: document.getElementById('grp-coord'),
+    anchor:     document.getElementById('grp-anchor'),
+    table_column: document.getElementById('grp-tbl'),
+  };
+  var titleEl    = document.getElementById('param-title');
+  var badgeEl    = document.getElementById('mode-badge');
+  var kwInput    = document.getElementById('kw-text');
+  var tchdrInput = document.getElementById('tchdr-text');
+
+  var modeTitles = {
+    coordinate:    '坐标提取参数',
+    anchor:        '关键词匹配参数',
+    table_column:  '表格列提取参数',
+  };
+  var modeBadges = {
+    coordinate:    '坐标提取',
+    anchor:        '锚点提取',
+    table_column:  '表格列提取',
+  };
+
+  rows.forEach(function(tr){
+    tr.addEventListener('click', function(){
+      // deselect all, select this
+      rows.forEach(function(r){ r.classList.remove('selected'); });
+      tr.classList.add('selected');
+
+      var mode = tr.getAttribute('data-mode');
+      var name = tr.getAttribute('data-name');
+      var kw   = tr.getAttribute('data-kw');
+
+      // toggle param groups
+      Object.keys(groups).forEach(function(k){
+        groups[k].style.display = (k === mode) ? '' : 'none';
+      });
+
+      // update title
+      titleEl.textContent = modeTitles[mode] || '坐标提取参数';
+      badgeEl.textContent = modeBadges[mode] || '坐标提取';
+
+      // fill keyword/header text from row data
+      if (mode === 'anchor' && kwInput) kwInput.value = kw;
+      if (mode === 'table_column' && tchdrInput) tchdrInput.value = kw;
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

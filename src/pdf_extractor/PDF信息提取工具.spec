@@ -26,7 +26,7 @@ a = Analysis(
     datas=[
         ('default.cfg', '.'),
         ('resources/styles.qss', 'resources'),
-        ('resources/app_icon.ico', 'resources'),
+        ('resources/app.ico', 'resources'),
     ],
     hiddenimports=[
         # PyQt5 核心模块
@@ -104,8 +104,8 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='PDF信息提取工具_v2.1',
-    icon='resources/app_icon.ico',
+    name='PDF信息提取工具_v3.2',
+    icon='resources/app.ico',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

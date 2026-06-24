@@ -3,7 +3,9 @@
 
 from typing import Dict, List, Optional
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
+    QAbstractItemView,
     QDialog,
     QHBoxLayout,
     QHeaderView,
@@ -11,10 +13,11 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QPushButton,
     QTableWidget,
+    QTableWidgetItem,
     QVBoxLayout,
 )
 
-from table_utils import populate_table, table_to_records
+from table_utils import populate_table, table_to_records, WordWrapDelegate
 
 SOURCE_COL = "来源文件"
 
@@ -53,12 +56,20 @@ class BatchConfirmDialog(QDialog):
         )
 
         self.table = QTableWidget()
+        self.table.setEditTriggers(QAbstractItemView.CurrentChanged)
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.setSelectionMode(QTableWidget.ExtendedSelection)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table.horizontalHeader().sectionResized.connect(
+            lambda _old, _new, _idx: self.table.resizeRowsToContents())
         layout.addWidget(self.table)
 
-        populate_table(self.table, self._columns, self._records, self._field_issues_map)
+        populate_table(self.table, self._columns, self._records, self._field_issues_map, widget_type="item")
+
+        delegate = WordWrapDelegate(self.table)
+        for ci in range(self.table.columnCount()):
+            self.table.setItemDelegateForColumn(ci, delegate)
+        self.table.resizeRowsToContents()
 
         row_btn = QHBoxLayout()
         self.btn_add_row = QPushButton("添加行", objectName="btn-small")
@@ -87,8 +98,7 @@ class BatchConfirmDialog(QDialog):
     def _add_row(self):
         row = self.table.rowCount()
         self.table.insertRow(row)
-        for col_idx, col_name in enumerate(self._columns):
-            from PyQt5.QtWidgets import QTableWidgetItem
+        for col_idx in range(len(self._columns)):
             self.table.setItem(row, col_idx, QTableWidgetItem(""))
 
     def _delete_rows(self):

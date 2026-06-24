@@ -3,7 +3,9 @@
 
 from typing import Dict, List, Optional
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
+    QAbstractItemView,
     QDialog,
     QHBoxLayout,
     QHeaderView,
@@ -13,7 +15,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from table_utils import highlight_empty_cells, populate_table, table_to_records
+from table_utils import highlight_empty_cells, populate_table, table_to_records, WordWrapDelegate
 
 
 class SingleConfirmDialog(QDialog):
@@ -45,12 +47,20 @@ class SingleConfirmDialog(QDialog):
         ))
 
         self.table = QTableWidget()
+        self.table.setEditTriggers(QAbstractItemView.CurrentChanged)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table.horizontalHeader().sectionResized.connect(
+            lambda _old, _new, _idx: self.table.resizeRowsToContents())
         layout.addWidget(self.table)
 
         rows = [{col: r.get(col, "") for col in self._columns} for r in self._records]
         issues_map = {0: self._field_issues} if self._field_issues else {}
-        populate_table(self.table, self._columns, rows, issues_map)
+        populate_table(self.table, self._columns, rows, issues_map, widget_type="item")
+
+        delegate = WordWrapDelegate(self.table)
+        for ci in range(self.table.columnCount()):
+            self.table.setItemDelegateForColumn(ci, delegate)
+        self.table.resizeRowsToContents()
 
         if self._field_issues:
             warnings = "；".join(f"{k}字段{v}" for k, v in self._field_issues.items())

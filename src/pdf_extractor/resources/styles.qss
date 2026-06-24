@@ -125,7 +125,7 @@ QHeaderView::section {
 QProgressBar {
     border: none; border-radius: 4px;
     background: #F1F5F9; height: 8px;
-    font-size: 12px; color: transparent;
+    font-size: 12px; color: #374151;
 }
 QProgressBar::chunk {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #15803D, stop:1 #22C55E);
@@ -159,7 +159,7 @@ QFrame#toolbar {
 /* ═══════════ Tags ═══════════ */
 QLabel#record-tag {
     background: #DCFCE7; color: #15803D;
-    border-radius: 9999px; padding: 3px 12px;
+    border-radius: 10px; padding: 2px 10px;
     font-size: 13px; font-weight: 500;
 }
 

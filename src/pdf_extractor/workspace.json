@@ -1,29 +1,31 @@
 {
   "config": {
-    "rule_name": "默认规则",
+    "rule_name": "工艺更改单",
     "rules": [
       {
         "name": "更改单编号",
         "mode": "anchor",
         "page_range": "第1页",
-        "x1": 305,
-        "y1": 798,
-        "x2": 433,
-        "y2": 812,
+        "x1": 0,
+        "y1": 0,
+        "x2": 0,
+        "y2": 0,
         "data_type": "文本",
         "keyword": "",
         "direction": "right",
         "range": 200,
-        "anchor_text": "编号："
+        "anchor_text": "编号：",
+        "column_header": "",
+        "row_number": 2
       },
       {
         "name": "工艺规程编号",
         "mode": "table_column",
         "page_range": "第1页",
-        "x1": 77,
-        "y1": 655,
-        "x2": 157,
-        "y2": 673,
+        "x1": 0,
+        "y1": 0,
+        "x2": 0,
+        "y2": 0,
         "data_type": "文本",
         "keyword": "",
         "direction": "right",
@@ -64,7 +66,7 @@
         "y1": 643,
         "x2": 384,
         "y2": 673,
-        "data_type": "日期",
+        "data_type": "文本",
         "keyword": "",
         "direction": "right",
         "range": 200,
@@ -82,7 +84,10 @@
         "y2": 0,
         "data_type": "文本",
         "column_header": "更改依据",
-        "row_number": 2
+        "row_number": 2,
+        "anchor_text": "",
+        "direction": "right",
+        "range": 200
       },
       {
         "name": "更改性质",
@@ -94,72 +99,97 @@
         "y2": 0,
         "data_type": "文本",
         "column_header": "更改性质",
-        "row_number": 2
+        "row_number": 2,
+        "anchor_text": "",
+        "direction": "right",
+        "range": 200
       }
     ]
   },
-  "config_path": "D:\\AppData\\workspace\\src\\pdf_extractor\\default.cfg",
+  "config_path": "D:/AppData/workspace/src/pdf_extractor/dist/工艺更改单.cfg",
   "files": [
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000155（公开）.pdf",
       "size": 70511,
       "status": "待处理",
-      "exists": true
+      "exists": true,
+      "elapsed": "0.2s"
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000169（公开）.pdf",
       "size": 69903,
       "status": "待处理",
-      "exists": true
+      "exists": true,
+      "elapsed": "0.2s"
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000194（公开）.pdf",
       "size": 69906,
       "status": "待处理",
-      "exists": true
+      "exists": true,
+      "elapsed": "0.0s"
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000246（公开）.pdf",
       "size": 79532,
       "status": "待处理",
-      "exists": true
+      "exists": true,
+      "elapsed": "0.2s"
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000383（公开）.pdf",
       "size": 69278,
       "status": "待处理",
-      "exists": true
+      "exists": true,
+      "elapsed": "0.2s"
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000422（公开）.pdf",
       "size": 70210,
       "status": "待处理",
-      "exists": true
+      "exists": true,
+      "elapsed": "0.2s"
     },
     {
       "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000423（公开）.pdf",
       "size": 69185,
       "status": "待处理",
-      "exists": true
-    },
-    {
-      "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000483（公开）.pdf",
-      "size": 70949,
-      "status": "待处理",
-      "exists": true
-    },
-    {
-      "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000484(公开）.pdf",
-      "size": 71156,
-      "status": "待处理",
-      "exists": true
-    },
-    {
-      "path": "D:\\文件\\公司AI学习\\工艺更改单输出测试用公开\\工艺更改单输出测试用（公开）\\15-ECO-GY-000486(公开）.pdf",
-      "size": 51875,
-      "status": "待处理",
-      "exists": true
+      "exists": true,
+      "elapsed": "0.2s"
     }
   ],
-  "confirmed_records": []
+  "confirmed_records": [
+    {
+      "更改单编号": "TZY15-ECO-GY-000155",
+      "工艺规程编号": "TZY15-IW-0090",
+      "更改内容": "020钳工工序更改为020钣金工序，用于零件校平",
+      "更改依据": "自发现的问题",
+      "更改性质": "完善性更改",
+      "来源文件": "15-ECO-GY-000155（公开）.pdf"
+    },
+    {
+      "更改单编号": "TZY15-ECO-GY-000169",
+      "工艺规程编号": "TZY15-IW-0111",
+      "更改内容": "依据TZY15-ECO-000078，新增视图及尺寸，新增技术要求。无制成品，无出厂产品，在制品无影响，自批准之日起执",
+      "更改依据": "触发的工程更改指令ECO",
+      "更改性质": "勘误性更改",
+      "来源文件": "15-ECO-GY-000169（公开）.pdf"
+    },
+    {
+      "更改单编号": "TZY15-ECO-GY-000194",
+      "工艺规程编号": "TZY15-IW-0093",
+      "更改内容": "依据TZY15-ECO-000085，剖视图A-A新增尺寸R7，3(典型)。制成品无影响，在制品无影响，自批准之日起。",
+      "更改依据": "触发的工程更改指令ECO",
+      "更改性质": "勘误性更改",
+      "来源文件": "15-ECO-GY-000194（公开）.pdf"
+    },
+    {
+      "更改单编号": "TZY15-ECO-GY-000246",
+      "工艺规程编号": "TZY15-L.IN-2025-0019",
+      "更改内容": "依据设计更改单TZY15-ECO-000111，5工序1工步增加在改装过程中允许出现轻微划伤,在划伤处涂清漆保护。30涂漆工序增加在背板升降组件和腰托调节组件连接的圆柱销附近划伤处涂TS70-1飞机蒙皮用银色聚氨酯无光磁漆保护。00配套工序增加20-350G-J白色锦丝搭扣带(背胶)Q/BW113-2021搭扣带L=325mm。增加13工序扶手装配。在制",
+      "更改依据": "触发的工程更改指令ECO",
+      "更改性质": "完善性更改",
+      "来源文件": "15-ECO-GY-000246（公开）.pdf"
+    }
+  ]
 }
