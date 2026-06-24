@@ -5,8 +5,8 @@ import os
 from typing import Optional
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QDialog, QFileDialog, QFrame, QHBoxLayout, QLabel,
-    QPushButton, QRadioButton, QVBoxLayout,
+    QButtonGroup, QDialog, QFileDialog, QFrame, QHBoxLayout,
+    QLabel, QPushButton, QRadioButton, QVBoxLayout,
 )
 
 
@@ -19,6 +19,7 @@ class ExcelOptionDialog(QDialog):
         self._tpl = None
         self._use = False
         self._cards = []
+        self._group = QButtonGroup(self)
         self._init_ui()
 
     def _init_ui(self):
@@ -42,6 +43,7 @@ class ExcelOptionDialog(QDialog):
             top.setSpacing(10)
             rb = QRadioButton()
             rb.setChecked(key == "default")
+            self._group.addButton(rb)
             top.addWidget(rb, alignment=Qt.AlignTop)
             tl = QVBoxLayout()
             tl.setSpacing(2)

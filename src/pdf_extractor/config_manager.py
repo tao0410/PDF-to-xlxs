@@ -142,43 +142,6 @@ class ConfigManager:
             return rules
         return []
 
-    # ── 最近配置文件 ──────────────────────────────────────
-
-    _RECENT_FILE = "recent_configs.json"
-    _MAX_RECENT = 5
-
-    @classmethod
-    def get_recent_configs(cls) -> List[str]:
-        """获取最近使用的配置文件路径列表。"""
-        recent_path = os.path.join(get_exe_dir(), cls._RECENT_FILE)
-        try:
-            if os.path.exists(recent_path):
-                with open(recent_path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                if isinstance(data, list):
-                    # 过滤已不存在的文件
-                    return [p for p in data if os.path.exists(p)][:cls._MAX_RECENT]
-        except Exception:
-            pass
-        return []
-
-    @classmethod
-    def add_recent_config(cls, path: str) -> None:
-        """添加一个配置文件路径到最近列表。"""
-        if not path or not os.path.exists(path):
-            return
-        recents = cls.get_recent_configs()
-        # 去重：移除已存在的相同路径
-        recents = [p for p in recents if os.path.abspath(p) != os.path.abspath(path)]
-        recents.insert(0, path)
-        recents = recents[:cls._MAX_RECENT]
-        recent_path = os.path.join(get_exe_dir(), cls._RECENT_FILE)
-        try:
-            with open(recent_path, "w", encoding="utf-8") as f:
-                json.dump(recents, f, ensure_ascii=False, indent=2)
-        except Exception as e:
-            logger.warning("保存最近配置列表失败: %s", e)
-
     @staticmethod
     def _validate_config(config: Any) -> bool:
         """校验配置结构。
@@ -236,3 +199,35 @@ class ConfigManager:
                 if "row_number" not in rule or not isinstance(rule["row_number"], int):
                     return False
         return True
+
+    # ── 最近配置文件 ──────────────────────────────────────
+    _RECENT_FILE = "recent_configs.json"
+    _MAX_RECENT = 5
+
+    @classmethod
+    def get_recent_configs(cls) -> List[str]:
+        recent_path = os.path.join(get_exe_dir(), cls._RECENT_FILE)
+        try:
+            if os.path.exists(recent_path):
+                with open(recent_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if isinstance(data, list):
+                    return [p for p in data if os.path.exists(p)][:cls._MAX_RECENT]
+        except Exception:
+            pass
+        return []
+
+    @classmethod
+    def add_recent_config(cls, path: str) -> None:
+        if not path or not os.path.exists(path):
+            return
+        recents = cls.get_recent_configs()
+        recents = [p for p in recents if os.path.abspath(p) != os.path.abspath(path)]
+        recents.insert(0, path)
+        recents = recents[:cls._MAX_RECENT]
+        recent_path = os.path.join(get_exe_dir(), cls._RECENT_FILE)
+        try:
+            with open(recent_path, "w", encoding="utf-8") as f:
+                json.dump(recents, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            logger.warning("保存最近配置列表失败: %s", e)

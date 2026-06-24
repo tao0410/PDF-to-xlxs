@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Set
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 
-WARNING_BG = QColor("#FEF3C7")
+WARNING_BG = QColor("#FFF2CC")
 
 
 def populate_table(

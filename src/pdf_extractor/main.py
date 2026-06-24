@@ -8,8 +8,6 @@ from PyQt5.QtWidgets import QApplication
 
 from app_utils import get_app_dir, get_exe_dir, setup_logging
 from main_window import MainWindow
-
-
 def main() -> int:
     """启动应用程序。"""
     setup_logging()

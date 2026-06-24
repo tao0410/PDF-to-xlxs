@@ -200,7 +200,7 @@ class PdfPreviewDialog(QDialog):
         layout.addLayout(coord_layout)
 
         self.lbl_status = QLabel("")
-        self.lbl_status.setStyleSheet("color: #0078D7; font-weight: bold;")
+        self.lbl_status.setStyleSheet("color: #15803D; font-weight: bold;")
         layout.addWidget(self.lbl_status)
 
         btn_layout = QHBoxLayout()

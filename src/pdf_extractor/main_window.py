@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""主界面：文件管理、处理控制、总内容编辑 (v2.2)。"""
+"""主界面：文件管理、处理控制、总内容编辑。"""
 
 import logging
 import os
@@ -7,7 +7,7 @@ import time
 from typing import Dict, List, Optional
 
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QDragEnterEvent, QDropEvent, QKeySequence
+from PyQt5.QtGui import QColor, QDragEnterEvent, QDropEvent, QFont, QKeySequence, QPainter
 from PyQt5.QtWidgets import (
     QAbstractItemView,
     QFileDialog,
@@ -21,6 +21,7 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QScrollArea,
     QShortcut,
+    QStyledItemDelegate,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
@@ -61,6 +62,36 @@ def basename(path: str) -> str:
     return os.path.basename(path)
 
 
+# 状态列胶囊标签配色：背景 / 文字
+STATUS_TAG_COLORS = {
+    STATUS_CONFIRMED: ("#DCFCE7", "#15803D"),
+    STATUS_PROCESSING: ("#F0FDF4", "#16A34A"),
+    STATUS_PENDING: ("#FEF3C7", "#D97706"),
+    STATUS_SKIPPED: ("#F1F5F9", "#64748B"),
+}
+
+
+class StatusTagDelegate(QStyledItemDelegate):
+    """在状态列绘制胶囊（pill）标签。"""
+
+    def paint(self, painter, option, index):
+        text = index.data() or ""
+        bg, fg = STATUS_TAG_COLORS.get(text, ("#F1F5F9", "#64748B"))
+        painter.save()
+        painter.setRenderHint(QPainter.Antialiasing)
+        rect = option.rect.adjusted(10, 6, -10, -6)
+        painter.setBrush(QColor(bg))
+        painter.setPen(Qt.NoPen)
+        painter.drawRoundedRect(rect, rect.height() / 2, rect.height() / 2)
+        painter.setPen(QColor(fg))
+        font = QFont(painter.font())
+        font.setPointSize(9)
+        font.setBold(True)
+        painter.setFont(font)
+        painter.drawText(rect, Qt.AlignCenter, text)
+        painter.restore()
+
+
 class MainWindow(QMainWindow):
     """主窗口。"""
 
@@ -97,7 +128,7 @@ class MainWindow(QMainWindow):
     # ═══════════════ UI ═══════════════
 
     def _init_ui(self):
-        # ── Scroll Area (supports small window sizes) ──
+        # ── v2.1 flat layout pattern + v2.2 cards/colors ──
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QScrollArea.NoFrame)
@@ -107,72 +138,55 @@ class MainWindow(QMainWindow):
         central = QWidget()
         scroll.setWidget(central)
         layout = QVBoxLayout(central)
-        layout.setContentsMargins(32, 24, 32, 24)
-        layout.setSpacing(24)
+        layout.setContentsMargins(24, 16, 24, 24)
+        layout.setSpacing(12)
 
         # ── Card 1: File List ──
         file_card = QFrame(objectName="card")
         fc = QVBoxLayout(file_card)
-        fc.setContentsMargins(24, 24, 24, 24)
-        fc.setSpacing(12)
+        fc.setSpacing(8)
 
         hdr = QHBoxLayout()
-        lbl = QLabel("已选择文件", objectName="section-title")
-        hdr.addWidget(lbl)
+        self.lbl_file_section = QLabel("已选择文件", objectName="section-title")
+        hdr.addWidget(self.lbl_file_section)
         hdr.addStretch()
         self.lbl_file_stats = QLabel("共 0 个，已处理 0 个，待处理 0 个", objectName="hint-text")
         hdr.addWidget(self.lbl_file_stats)
         fc.addLayout(hdr)
 
         self.file_table = QTableWidget()
-        self.file_table.setColumnCount(6)
-        self.file_table.setHorizontalHeaderLabels(["", "#", "文件名", "大小", "状态", "耗时"])
-        hh = self.file_table.horizontalHeader()
-        hh.setSectionResizeMode(0, QHeaderView.Fixed)
-        self.file_table.setColumnWidth(0, 40)
-        hh.setSectionResizeMode(1, QHeaderView.Fixed)
-        self.file_table.setColumnWidth(1, 40)
-        hh.setSectionResizeMode(2, QHeaderView.Stretch)
-        hh.setSectionResizeMode(3, QHeaderView.Fixed)
-        self.file_table.setColumnWidth(3, 80)
-        hh.setSectionResizeMode(4, QHeaderView.Fixed)
-        self.file_table.setColumnWidth(4, 90)
-        hh.setSectionResizeMode(5, QHeaderView.Fixed)
-        self.file_table.setColumnWidth(5, 70)
+        self.file_table.setColumnCount(5)
+        self.file_table.setHorizontalHeaderLabels(["序号", "文件名", "文件大小", "状态", "耗时"])
+        # v2.1 approach: all columns Stretch fills width naturally
+        self.file_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.file_table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.file_table.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.file_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.file_table.setAlternatingRowColors(True)
         self.file_table.verticalHeader().setVisible(False)
-        self.file_table.setSizeAdjustPolicy(QAbstractItemView.AdjustToContents)
-        self.file_table.setMinimumHeight(120)
-        fc.addWidget(self.file_table)
+        self.file_table.setItemDelegateForColumn(3, StatusTagDelegate(self.file_table))
+        fc.addWidget(self.file_table, 1)
 
         bot = QHBoxLayout()
         self.lbl_checked = QLabel("已选中 0 项", objectName="hint-text")
         bot.addWidget(self.lbl_checked)
         bot.addStretch()
         self.btn_open = QPushButton("打开")
+        self.btn_open.setObjectName("btn-secondary")
         self.btn_remove = QPushButton("移除选中")
+        self.btn_remove.setObjectName("btn-secondary")
         self.btn_clear = QPushButton("清空")
         self.btn_clear.setObjectName("btn-ghost")
         bot.addWidget(self.btn_open)
         bot.addWidget(self.btn_remove)
         bot.addWidget(self.btn_clear)
         fc.addLayout(bot)
-        file_card.setMinimumHeight(180)
-        layout.addWidget(file_card)
 
-        # ── Card 2: Processing ──
-        proc_card = QFrame(objectName="card")
-        pc = QVBoxLayout(proc_card)
-        pc.setContentsMargins(24, 20, 24, 20)
-        pc.setSpacing(10)
-
+        # ── Processing controls (inside file_card) ──
         self.lbl_banner = QLabel()
         self.lbl_banner.setVisible(False)
         self.lbl_banner.setWordWrap(True)
-        pc.addWidget(self.lbl_banner)
+        fc.addWidget(self.lbl_banner)
 
         row = QHBoxLayout()
         self.btn_start = QPushButton("开始处理")
@@ -181,32 +195,36 @@ class MainWindow(QMainWindow):
         self.btn_cancel.setObjectName("btn-ghost")
         self.btn_cancel.setEnabled(False)
         row.addWidget(self.btn_start)
-        row.addWidget(self.btn_cancel)
         row.addStretch()
-        pc.addLayout(row)
+        row.addWidget(self.btn_cancel)
+        fc.addLayout(row)
 
+        prog_layout = QHBoxLayout()
+        prog_layout.addWidget(QLabel("进度："))
         self.progress_bar = QProgressBar()
         self.progress_bar.setValue(0)
-        self.progress_bar.setFixedHeight(8)
-        pc.addWidget(self.progress_bar)
+        prog_layout.addWidget(self.progress_bar, 1)
+        fc.addLayout(prog_layout)
 
-        self.lbl_status = QLabel("就绪", objectName="hint-text")
-        pc.addWidget(self.lbl_status)
-        layout.addWidget(proc_card)
+        self.lbl_status = QLabel("状态：就绪", objectName="hint-text")
+        fc.addWidget(self.lbl_status)
+
+        layout.addWidget(file_card, 3)
 
         # ── Card 3: Confirmed Content ──
         content_card = QFrame(objectName="card")
         cc = QVBoxLayout(content_card)
-        cc.setContentsMargins(24, 20, 24, 20)
-        cc.setSpacing(12)
+        cc.setSpacing(8)
 
         hdr2 = QHBoxLayout()
-        lbl2 = QLabel("已确认内容", objectName="section-title")
-        hdr2.addWidget(lbl2)
-        self.lbl_record_stats = QLabel("共 0 条记录", objectName="hint-text")
+        self.lbl_content_section = QLabel("已确认内容", objectName="section-title")
+        hdr2.addWidget(self.lbl_content_section)
+        self.lbl_record_stats = QLabel("0 条记录")
+        self.lbl_record_stats.setObjectName("record-tag")
         hdr2.addWidget(self.lbl_record_stats)
         hdr2.addStretch()
         self.btn_add_record = QPushButton("添加行")
+        self.btn_add_record.setObjectName("btn-secondary")
         self.btn_delete_records = QPushButton("删除选中")
         self.btn_delete_records.setObjectName("btn-ghost")
         self.btn_clear_records = QPushButton("清空全部")
@@ -221,18 +239,17 @@ class MainWindow(QMainWindow):
         self.content_table.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.content_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.content_table.setAlternatingRowColors(True)
+        self.content_table.setEditTriggers(QAbstractItemView.DoubleClicked | QAbstractItemView.EditKeyPressed)
         self.content_table.verticalHeader().setVisible(False)
-        self.content_table.setSizeAdjustPolicy(QAbstractItemView.AdjustToContents)
-        self.content_table.setMinimumHeight(100)
-        cc.addWidget(self.content_table)
-        content_card.setMinimumHeight(160)
-        layout.addWidget(content_card, 1)  # stretch factor 1 — this card expands
+        cc.addWidget(self.content_table, 1)
+        layout.addWidget(content_card, 2)
 
         # ── Bottom Bar ──
         bar = QFrame(objectName="toolbar")
         bl = QHBoxLayout(bar)
         bl.setContentsMargins(0, 0, 0, 0)
         self.btn_config = QPushButton("配置提取规则")
+        self.btn_config.setObjectName("btn-secondary")
         self.btn_export = QPushButton("生成 Excel")
         self.btn_export.setObjectName("btn-primary")
         bl.addWidget(self.btn_config)
@@ -257,7 +274,6 @@ class MainWindow(QMainWindow):
         QShortcut(QKeySequence("Ctrl+O"), self, self._open_files)
         QShortcut(QKeySequence("Ctrl+E"), self, self._export_excel)
         QShortcut(QKeySequence("Ctrl+D"), self, self._open_config_dialog)
-        QShortcut(QKeySequence("Ctrl+S"), self, self._save_config)
         QShortcut(QKeySequence.Delete, self, self._delete_content_rows)
 
     # ═══════════════ Helpers ═══════════════
@@ -273,48 +289,41 @@ class MainWindow(QMainWindow):
     def _refresh_file_table(self):
         self.file_table.setRowCount(len(self.files))
         for idx, f in enumerate(self.files):
-            # Column 0: checkbox
-            item = QTableWidgetItem()
-            item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-            item.setCheckState(Qt.Checked if f.get("checked", True) else Qt.Unchecked)
-            self.file_table.setItem(idx, 0, item)
-            # Column 1: index
-            self.file_table.setItem(idx, 1, QTableWidgetItem(str(idx + 1)))
-            # Column 2: filename
+            # Column 0: index (center)
+            item0 = QTableWidgetItem(str(idx + 1))
+            item0.setTextAlignment(Qt.AlignCenter)
+            self.file_table.setItem(idx, 0, item0)
+            # Column 1: filename (left, VCenter)
             name = basename(f["path"])
             if not f.get("exists", True):
                 name += " (文件不存在)"
-            self.file_table.setItem(idx, 2, QTableWidgetItem(name))
-            # Column 3: size
-            self.file_table.setItem(idx, 3, QTableWidgetItem(format_size(f.get("size", 0))))
-            # Column 4: status
+            item1 = QTableWidgetItem(name)
+            self.file_table.setItem(idx, 1, item1)
+            # Column 2: size (right)
+            item2 = QTableWidgetItem(format_size(f.get("size", 0)))
+            item2.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self.file_table.setItem(idx, 2, item2)
+            # Column 3: status (center) — pill tag drawn by StatusTagDelegate
             status = f.get("status", STATUS_PENDING)
-            self.file_table.setItem(idx, 4, QTableWidgetItem(status))
-            if status == STATUS_CONFIRMED:
-                self.file_table.item(idx, 4).setForeground(Qt.darkGreen)
-            elif status == STATUS_SKIPPED:
-                self.file_table.item(idx, 4).setForeground(Qt.gray)
-            # Column 5: elapsed time
+            item3 = QTableWidgetItem(status)
+            item3.setTextAlignment(Qt.AlignCenter)
+            self.file_table.setItem(idx, 3, item3)
+            # Column 4: elapsed time (center)
             elapsed = f.get("elapsed", "")
-            self.file_table.setItem(idx, 5, QTableWidgetItem(elapsed))
+            item4 = QTableWidgetItem(elapsed)
+            item4.setTextAlignment(Qt.AlignCenter)
+            self.file_table.setItem(idx, 4, item4)
         self._update_file_stats()
-
-    def _sync_checks(self):
-        """从表格读回复选框状态。"""
-        for idx in range(min(self.file_table.rowCount(), len(self.files))):
-            item = self.file_table.item(idx, 0)
-            if item:
-                self.files[idx]["checked"] = (item.checkState() == Qt.Checked)
 
     def _update_file_stats(self):
         total = len(self.files)
-        checked = sum(1 for f in self.files if f.get("checked", True))
+        selected = len(set(idx.row() for idx in self.file_table.selectedIndexes()))
         processed = sum(1 for f in self.files if f["status"] in (STATUS_CONFIRMED, STATUS_SKIPPED))
         pending = total - processed
         self.lbl_file_stats.setText(
             f"共 {total} 个，已处理 {processed} 个，待处理 {pending} 个"
         )
-        self.lbl_checked.setText(f"已选中 {checked} 项")
+        self.lbl_checked.setText(f"已选中 {selected} 项" if selected else f"共 {total} 个文件")
 
     # ═══════════════ Content Table ═══════════════
 
@@ -328,13 +337,15 @@ class MainWindow(QMainWindow):
             for ci, cn in enumerate(cols):
                 self.content_table.setItem(row, ci, QTableWidgetItem(str(record.get(cn, ""))))
         self.content_table.blockSignals(False)
-        self.lbl_record_stats.setText(f"共 {len(self.confirmed_records)} 条记录")
+        self.lbl_record_stats.setText(f"{len(self.confirmed_records)} 条记录")
+        self.lbl_record_stats.setObjectName("record-tag")
+        self.lbl_record_stats.style().unpolish(self.lbl_record_stats)
+        self.lbl_record_stats.style().polish(self.lbl_record_stats)
 
     def _update_ui_state(self):
         has_records = len(self.confirmed_records) > 0
         has_pending = any(
-            f["status"] == STATUS_PENDING and f.get("checked", True)
-            for f in self.files
+            f["status"] == STATUS_PENDING for f in self.files
         )
         all_processed = (
             len(self.files) > 0 and
@@ -352,7 +363,7 @@ class MainWindow(QMainWindow):
             )
             self.lbl_banner.setObjectName("success-banner")
             self.lbl_banner.setVisible(True)
-        elif self._worker:
+        else:
             self.lbl_banner.setVisible(False)
         # Force restyle
         self.lbl_banner.style().unpolish(self.lbl_banner)
@@ -382,7 +393,7 @@ class MainWindow(QMainWindow):
             sz = os.path.getsize(p)
             self.files.append({
                 "path": p, "size": sz, "status": STATUS_PENDING,
-                "checked": True, "exists": True
+                "exists": True
             })
             existing.add(p)
             logger.info("添加文件: %s", p)
@@ -425,10 +436,10 @@ class MainWindow(QMainWindow):
     # ═══════════════ Processing ═══════════════
 
     def _start_processing(self):
-        self._sync_checks()
+        selected_rows = set(idx.row() for idx in self.file_table.selectedIndexes())
         pending = [
-            f for f in self.files
-            if f["status"] == STATUS_PENDING and f.get("checked", True)
+            f for i, f in enumerate(self.files)
+            if f["status"] == STATUS_PENDING and (i in selected_rows if selected_rows else True)
         ]
         if not pending:
             all_done = all(
@@ -436,8 +447,10 @@ class MainWindow(QMainWindow):
             )
             if all_done and self.files:
                 QMessageBox.information(self, "提示", "所有文件已处理完毕，请导出 Excel")
+            elif not selected_rows:
+                QMessageBox.information(self, "提示", "请先选中要处理的文件行（Shift连选/Ctrl跳选）")
             else:
-                QMessageBox.information(self, "提示", "没有待处理的文件（请勾选需处理的文件）")
+                QMessageBox.information(self, "提示", "选中的文件均已处理")
             return
 
         self._pending_paths = [f["path"] for f in pending]
@@ -606,10 +619,17 @@ class MainWindow(QMainWindow):
                         f["status"] = STATUS_PENDING
             break
 
+        if self.files and all(f["status"] in (STATUS_CONFIRMED, STATUS_SKIPPED) for f in self.files):
+            self.files.clear()
         self._refresh_file_table()
         self._refresh_content_table()
         self._update_ui_state()
         self._save_session()
+
+    def _remove_processed_files(self):
+        """移除已确认和已跳过的文件（P0-1: 处理完成后自动清空）。"""
+        self.files = [f for f in self.files
+                      if f["status"] not in (STATUS_CONFIRMED, STATUS_SKIPPED)]
 
     # ═══════════════ Batch Confirm ═══════════════
 
@@ -678,6 +698,8 @@ class MainWindow(QMainWindow):
                         f["status"] = STATUS_PENDING
             break
 
+        if self.files and all(f["status"] in (STATUS_CONFIRMED, STATUS_SKIPPED) for f in self.files):
+            self.files.clear()
         self._refresh_file_table()
         self._refresh_content_table()
         self._update_ui_state()
@@ -686,30 +708,13 @@ class MainWindow(QMainWindow):
     # ═══════════════ Config ═══════════════
 
     def _open_config_dialog(self):
-        pending = [f["path"] for f in self.files if f["status"] == STATUS_PENDING]
-        dlg = ConfigDialog(self.config, self.config_path, pending, self)
-        if dlg.exec_():
-            self.config = dlg.get_config()
-            self.config_path = dlg.get_config_path() or self.config_path
-            self._refresh_content_table()
-            self._save_session()
-            ConfigManager.add_recent_config(self.config_path)
-
-    def _load_config(self):
-        path, _ = QFileDialog.getOpenFileName(self, "加载配置", "", "配置文件 (*.cfg)")
-        if path:
-            self.config = ConfigManager.load(path)
-            self.config_path = path
-            self._refresh_content_table()
-            self._save_session()
-            ConfigManager.add_recent_config(path)
-            QMessageBox.information(self, "成功", "配置已加载")
-
-    def _save_config(self):
-        if ConfigManager.save(self.config, self.config_path):
-            QMessageBox.information(self, "成功", "配置已保存")
-        else:
-            QMessageBox.critical(self, "错误", "保存配置失败")
+        dlg = ConfigDialog(self.config, self.config_path, parent=self)
+        dlg.exec_()
+        # 关闭即应用：无论 accept/reject 都取回最新编辑并生效
+        self.config = dlg.get_config()
+        self.config_path = dlg.get_config_path() or self.config_path
+        self._refresh_content_table()
+        self._save_session()
 
     # ═══════════════ Excel Export ═══════════════
 
@@ -748,10 +753,11 @@ class MainWindow(QMainWindow):
             path += ".xlsx"
 
         gen = ExcelGenerator(cols)
+        sort_key = cols[0] if cols else "编号"
         if opt.use_template() and opt.get_template_path():
-            ok = gen.generate_from_template(records, opt.get_template_path(), path)
+            ok = gen.generate_from_template(records, opt.get_template_path(), path, sort_key=sort_key)
         else:
-            ok = gen.generate(records, path)
+            ok = gen.generate(records, path, sort_key=sort_key)
 
         if ok:
             mb = QMessageBox(self)
@@ -807,7 +813,7 @@ class MainWindow(QMainWindow):
 
     def _on_content_changed(self):
         self.confirmed_records = table_to_records(self.content_table, self._content_columns())
-        self.lbl_record_stats.setText(f"共 {len(self.confirmed_records)} 条记录")
+        self.lbl_record_stats.setText(f"{len(self.confirmed_records)} 条记录")
         self._save_session()
 
     # ═══════════════ Session ═══════════════
@@ -826,9 +832,6 @@ class MainWindow(QMainWindow):
             self.config = data.get("config", self.config)
             self.config_path = data.get("config_path", self.config_path)
             self.files = SessionManager.validate_restored_files(data.get("files", []))
-            for f in self.files:
-                if "checked" not in f:
-                    f["checked"] = True
             self.confirmed_records = data.get("confirmed_records", [])
             missing = [basename(f["path"]) for f in self.files if not f.get("exists", True)]
             if missing:
