@@ -274,7 +274,7 @@ class PdfExtractor:
 
         for w in sorted_words[1:]:
             w_y = (w["top"] + w["bottom"]) / 2
-            if abs(w_y - max_center) <= 12:
+            if abs(w_y - max_center) <= 15:
                 current_row.append(w)
                 if w_y > max_center:
                     max_center = w_y
@@ -334,17 +334,24 @@ class PdfExtractor:
             header_row_words.sort(key=lambda w: w["x0"])
             headers_info = [(w["x0"], w["x1"], w.get("text", "")) for w in header_row_words]
 
-            # 2. 确定目标列的 X 范围（列间中点分割）
+            # 2. 确定目标列宽度加权边界（宽列得宽边界，窄列得窄边界）
             col_left, col_right = None, None
             for i in range(len(headers_info)):
                 hx0, hx1, htext = headers_info[i][0], headers_info[i][1], headers_info[i][2]
                 if column_header in htext:
+                    cw = hx1 - hx0
                     if i > 0:
-                        col_left = (headers_info[i - 1][1] + hx0) / 2
+                        pw = headers_info[i - 1][1] - headers_info[i - 1][0]
+                        gap = hx0 - headers_info[i - 1][1]
+                        r = pw / (pw + cw) if (pw + cw) > 0 else 0.5
+                        col_left = headers_info[i - 1][1] + gap * r
                     else:
                         col_left = max(0, hx0 - 20)
                     if i + 1 < len(headers_info):
-                        col_right = (hx1 + headers_info[i + 1][0]) / 2
+                        nw = headers_info[i + 1][1] - headers_info[i + 1][0]
+                        gap = headers_info[i + 1][0] - hx1
+                        r = cw / (cw + nw) if (cw + nw) > 0 else 0.5
+                        col_right = hx1 + gap * r
                     else:
                         col_right = min(page.width, hx1 + 20)
                     break
@@ -363,22 +370,40 @@ class PdfExtractor:
 
             rows = self._cluster_words_to_rows(data_words)
 
-            # 4. 按 row_number 取指定行（row_number=2 → data_rows[0]）
-            data_idx = row_number - 2  # 转为 0-based 数据行索引
+            # 4. 按 row_number 取指定行
+            data_idx = row_number - 2
             if data_idx < 0 or data_idx >= len(rows):
                 return "", f"行号 {row_number} 超出数据范围（共 {len(rows)} 行数据）"
 
             target_row = rows[data_idx]
             col_words = []
             for w in target_row:
-                w_x_center = (w["x0"] + w["x1"]) / 2
-                if col_left <= w_x_center <= col_right:
+                x = (w["x0"] + w["x1"]) / 2
+                if col_left <= x <= col_right:
                     col_words.append(w.get("text", "").strip())
 
             if not col_words:
                 return "", f"第 {row_number} 行中未找到列「{column_header}」的数据"
 
             value = self._clean_text(" ".join(col_words))
+
+            # 5. 折行合并（续文范围比主提取宽 10pt，与已验证的 +5/-5 等效）
+            cont_left = max(0, col_left - 10)
+            cont_right = col_right + 10
+            for extra_row in rows[data_idx + 1:data_idx + 10]:
+                extra_words = []
+                has_other = False
+                for w in extra_row:
+                    x = (w["x0"] + w["x1"]) / 2
+                    if cont_left <= x <= cont_right:
+                        extra_words.append(w.get("text", "").strip())
+                    else:
+                        has_other = True
+                if extra_words and not has_other:
+                    value += " " + self._clean_text(" ".join(extra_words))
+                else:
+                    break
+
             issue = self._validate_field(value, rule.get("data_type", "文本"))
             return value, issue
 
